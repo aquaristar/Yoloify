@@ -1,0 +1,7 @@
+[program:{{supervisor.command_name}}]
+command = {{supervisor.command_path}}
+{% if 'env' in supervisor %}
+{% for key, value in supervisor.env.iteritems() %}
+{{key}} = {{value}}
+{% endfor %}
+{% endif %}

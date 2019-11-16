@@ -1,0 +1,34 @@
+{% load i18n %}
+<div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="loginModalTitle" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-fullscreen">
+    <div class="modal-content">
+      <form method="post" action="{% url "api-login" %}">
+      {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 id="loginModalTitle" class="modal-title">
+            {% url "signup" as signup_url %}
+            <strong>{% blocktrans %}Not a member? <a href="{{ signup_url }}" data-modal="#signupModal">Sign up</a>{% endblocktrans %}</strong>
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-form alert-danger hide"></div>
+          <div class="row">
+            <div class="col-md-12"><a class="btn btn-primary facebook-login" href="/login/facebook/">Login with Facebook</a></div>
+          </div>
+
+          <div class="row">
+            <h5>or sign in with email</h5>
+          </div>
+
+          {% with hide_label=True ajax=True%}
+            {% include "forms/_input.html" with field=form.email errors=form.errors.email %}
+            {% include "forms/_input.html" with field=form.password errors=form.errors.password type="password" %}
+            <p class="help-block"><a href="{% url "reset_password" %}" data-modal="#passwordResetModal">{% trans "Forgot your password?" %}</a></p>
+          {% endwith %}
+          <button type="submit" class="btn btn-block btn-primary btn-lg">{% trans "Sign In" %}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+{% load i18n crispy_forms_tags %}
+{# TODO use id_for_label #}
+<div id="signupModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="signupModalTitle" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-fullscreen">
+    <div class="modal-content">
+      <form method="post" action="{% url "api-signup" %}" autocomplete="off">
+      {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 id="signupModalTitle" class="modal-title">{% trans "Sign up for YOLOify!" %}</h4>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          {% with hide_label=True ajax=True %}
+            {% csrf_token %}
+
+            <div class="row">
+              <div class="col-md-12"><a class="btn btn-primary facebook-login" href="/login/facebook/">Login with Facebook</a></div>
+            </div>
+
+            <div class="row">
+              <h5>or sign up with email</h5>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                {% include "forms/_form_errors.html" with form=form %}
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.first_name errors=form.errors.first_name %}
+              </div>
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.last_name errors=form.errors.last_name %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.email errors=form.errors.email %}
+              </div>
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.password errors=form.errors.password type='password' %}
+              </div>
+            </div>
+          {% endwith %}
+
+          <p class="well well-sm">
+            <small>{% blocktrans %}By Creating an account, I accept YOLOify's <a href="/pages/terms-of-use/" target="_blank"><strong>Terms of Service</strong></a> and <a href="/pages/privacy-policy/" target="_blank"><strong>Privacy Policy</strong></a>.{% endblocktrans %}</small>
+          </p>
+          <button type="submit" class="btn btn-block btn-primary">{% trans "Sign up" %}</button>
+        </div>
+        <div class="modal-footer">
+        {% url "login" as login_url %}
+          <p class="login">{% blocktrans %}Already a member? <a href="{{ login_url }}" data-modal="#loginModal">Sign In</a>{% endblocktrans %}</p>
+          <p class="resend"><a href="{% url "confirmation_resend" %}" data-modal="#resendModal">{% trans "Didn't get a confirmation email?" %}</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

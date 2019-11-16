@@ -1,0 +1,63 @@
+{% extends "singleform_base.html" %}
+{% load i18n %}
+
+{% block form %}
+  <div class="page-header login">
+  <h4>    
+    {% url "login" as login_url %}
+    <strong>    
+    <p class="login">{% blocktrans %}Already a member? <a href="{{ login_url }}" >Sign In</a>{% endblocktrans %}</p>
+    </strong>
+  </h4>
+
+  </div>
+
+  <form method="post" autocomplete="off">
+    
+  {% csrf_token %}
+  <div class="modal-body login">
+    <div class="alert alert-form alert-danger hide"></div>
+
+    <div class="col-md-12 fb">
+      <a class="btn btn-primary facebook-login" href="/login/facebook/">Login with Facebook</a>
+
+    <div class="row">
+      <h5>or sign in with email</h5>
+    </div>    
+    
+    
+          <div class="row">
+              <div class="col-md-12">
+                {% include "forms/_form_errors.html" with form=form %}
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.first_name errors=form.errors.first_name %}
+              </div>
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.last_name errors=form.errors.last_name %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.email errors=form.errors.email %}
+              </div>
+              <div class="col-md-6">
+                {% include "forms/_input.html" with field=form.password errors=form.errors.password type='password' %}
+              </div>
+            </div>
+    <br />
+    <p class="well well-sm">
+      {% blocktrans %}By Creating an account, I accept YOLOify's <a target="_blank" href="/pages/terms-of-service/"><strong>Terms of Service</strong></a> and <a target="_blank" href="/pages/privacy-policy/"><strong>Privacy Policy</strong></a>.{% endblocktrans %}
+    </p>
+    <button type="submit" class="btn btn-block btn-primary">{% trans "Sign up" %}</button>
+ 
+  </form>
+
+  <br />
+
+{% endblock %}

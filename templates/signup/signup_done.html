@@ -1,0 +1,9 @@
+{% extends "singleform_base.html" %}
+{% load i18n %}
+
+{% block form %}
+  <div class="page-header">\
+    <h2>{% trans "Confirmation sent" %}</h2>
+  </div>
+  <p>{% blocktrans %}Your email confirmation has been sent.{% endblocktrans %}</p>
+{% endblock form %}

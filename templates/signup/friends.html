@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body_class %}friends{% endblock %}
+
+{% block container %}
+  <div class="media"></div>
+  <nav>
+    <div class="btn-group visible-xs section-dropdown">
+      <button type="button" class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown">
+      {% if section == 'search' %}
+        {% trans "Search" %}
+      {% elif section == 'facebook' %}
+        {% trans "Facebook" %}
+      {% elif section == 'following' %}
+        {% trans "Following" %}
+      {% elif section == 'followers' %}
+        {% trans "Followers" %}
+      {% endif %}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li{% if section == "search" %} class="active"{% endif %}><a href="./?search">Search</a></li>
+        <li{% if section == "facebook" %} class="active"{% endif %}><a href="./?facebook">{% trans "Facebook" %}</a></li>
+        <li{% if section == "following" %} class="active"{% endif %}><a href="./">{% trans "Following" %}</a></li>
+        <li{% if section == "followers" %} class="active"{% endif %}><a href="./?followers">{% trans "Followers" %}</a></li>
+      </ul>
+    </div>
+    <ul class="nav nav-tabs container hidden-xs">
+      <li{% if section == "search" %} class="active"{% endif %}><a href="./?search">Search</a></li>
+      <li{% if section == "facebook" %} class="active"{% endif %}><a href="./?facebook">{% blocktrans %}Facebook{% endblocktrans %}</a></li>
+      <li{% if section == "following" %} class="active"{% endif %}><a href="./">{% blocktrans %}Following{% endblocktrans %}</a></li>
+      <li{% if section == "followers" %} class="active"{% endif %}><a href="./?followers">{% blocktrans %}Followers{% endblocktrans %}</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <div class="tab-content">
+      <div class="tab-pane active friends-container">
+      {% if section == 'search' %}
+        <form method="GET" class="search-form  form-inline">
+          <div class="form-group">
+            <input type="text" name="search" value="{{ q }}" class="form-control" placeholder="{% trans " Input Name then Press Enter to Search" %}" />
+          </div>
+        </form>
+      {% endif %}
+      {% if section == 'facebook' %}
+        <div class="container">
+          <div class="tab-content">
+            <div class="tab-pane active" id="facbookfriends">
+              {% if has_facebook_account %}
+                {% if facebook_friends %}
+                  <ul class="friends list-unstyled">
+                    {% for friend in facebook_friends %}
+                      <li class="friend">
+                        {% include "signup/_friend_hover_part.html" %}
+                        <a class="userpic-link" href="{% url "profile" friend.pk %}">
+                          <div class="userpic-background">
+                            {% if friend.userpic %}
+                            {% with friend.generate_userpic_large as pic %}
+                              <img data-src="{{ pic.url }}" width="{{ pic.width }}" height="{{ pic.height }}" alt="" />
+                            {% endwith %}
+                            {% else %}
+                              <img data-src="{{ STATIC_URL }}img/userpic.png" width="263" height="263" alt="" />
+                            {% endif %}
+                          </div>
+                          <p>{{ friend.user.get_full_name }}</p>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <div class="disconnected">
+                    <p>You currently have no facebook friends on YOLOify.</a></p>
+                  </div>
+                {% endif %}
+              {% else %}
+                <div class="disconnected">
+                  <p>Connect with Facebook to find your friends on YOLOify!</p>
+                  <a class="btn btn-primary facebook-connect" href="javascript:;">Connect with Facebook</a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      {% if friends %}
+        <ul class="friends  list-unstyled">
+        {% for friend in friends %}
+          <li class="friend">
+            {% include "signup/_friend_hover_part.html" %}
+            <a class="userpic-link" href="{% url "profile" friend.pk %}">
+              <div class="userpic-background">
+                {% if friend.userpic %}
+                {% with friend.generate_userpic_large as pic %}
+                  <img data-src="{{ pic.url }}" width="{{ pic.width }}" height="{{ pic.height }}" alt="" />
+                {% endwith %}
+                {% else %}
+                  <img data-src="{{ STATIC_URL }}img/userpic.png" width="263" height="263" alt="" />
+                {% endif %}
+              </div>
+              <p>{{ friend.user.get_full_name }}</p>
+            </a>
+          </li>
+        {% endfor %}
+        </ul>
+      {% else %}
+        {% if section == 'following' %}
+          <div class="alert alert-info">
+            You don't follow anyone. <a href="/friends/?search">Search</a> for friends.
+          </div>
+        {% endif %}
+        {% if section == 'followers' %}
+          <div class="alert alert-info">
+            No one is following you :(
+          </div>
+        {% endif %}
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  <div id="fb-root"></div>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ super }}
+  var layout = function() {
+      $('ul.friends li.friend').wookmark({
+        autoResize: true, // This will auto-update the layout when the browser window is resized.
+        container: $('ul.friends').parent(), // Optional, used for some extra CSS styling
+        offset: 0, // Optional, the distance between grid items
+        outerOffset: 0, // Optional, the distance to the containers border
+        itemWidth: '285', // Optional, the width of a grid item
+        flexibleWidth: true
+      });
+      $('ul.facebookfriends li.friend').wookmark({
+        autoResize: true, // This will auto-update the layout when the browser window is resized.
+        container: $('ul.facebookfriends').parent(), // Optional, used for some extra CSS styling
+        offset: 0, // Optional, the distance between grid items
+        outerOffset: 0, // Optional, the distance to the containers border
+        itemWidth: '285', // Optional, the width of a grid item
+        flexibleWidth: true
+      });
+  };
+  layout(); // initial layout
+  $('.userpic-link').each(function () {
+    var $link = $(this);
+    var pictureWidth = $link.innerWidth() - parseInt($link.css('padding-left')) - parseInt($link.css('padding-right'));
+    var $pic = $('.userpic-background', $link);
+    $pic.width(pictureWidth).height(pictureWidth); // assuming userpics are squared
+  });
+  layout();
+
+  $('.friend img').each(function(){
+      // call layout when any image finishes loading
+      $(this).load(function () {
+          var $img = $(this);
+          $img.hide();
+          $img.css('visibility', 'visible');
+          $img.fadeIn('slow');
+      }).attr("src", $(this).data("src"));
+  });
+
+  $(document).ready(function ($) {
+      $('#facebooktabs').tab();
+      $('#facebooktabs a').bind('click', function (e) {
+        var $this = $(this);
+        $('#facebooktabs a').not($this).removeClass('active');
+        $this.addClass('active');
+        //$('ul.friends li.friend').trigger('refreshWookmark');
+        $(window).trigger('resize');
+      });
+
+      $('div.disconnected a.tabLink').click(function (e) {
+        e.preventDefault();
+        $('a[href="' + $(this).attr('href') + '"]').tab('show');
+        $(window).trigger('resize');
+      });
+  });
+
+  $('li.friend').hover(
+    function () {
+      $(this).find('.friend-hover-menu').show();
+    }, function () {
+      $(this).find('.friend-hover-menu').hide();
+    }
+  );
+
+  $('div.friend-hover-menu').on('click', '.follow', function (e) {
+    if (!$(this).hasClass('loading')){
+      var self = $(this),
+          friendId = $(this).attr('data-friend-id'),
+          url = '/follow/' + friendId + '/';
+      console.log(url);
+      $(this).removeClass('follow');
+      $(this).addClass('loading');
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: "json"
+      }).done(function( responseText ) {
+        
+        self.addClass('unfollow').html('Unfollow');
+
+      }).fail(function(xhr, status, error){
+
+        self.addClass('follow');
+
+      }).complete(function( jqXHR, status ) {
+
+        self.removeClass('loading');
+
+      });
+      
+    }
+  });
+
+  $('div.friend-hover-menu').on('click', '.unfollow', function (e) {
+    if (!$(this).hasClass('loading')){
+      var self = $(this),
+          friendId = $(this).attr('data-friend-id'),
+          url = '/unfollow/' + friendId + '/';
+      console.log(url);
+      $(this).removeClass('unfollow');
+      $(this).addClass('loading');
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: "json"
+      }).done(function( responseText ) {
+        
+        self.addClass('follow').html('Follow');
+
+      }).fail(function(xhr, status, error){
+
+        self.addClass('unfollow');
+
+      }).complete(function( jqXHR, status ) {
+
+        self.removeClass('loading');
+
+      });
+
+    }
+  });
+{% endblock %}
+</script>
+
+<script>
+{% block fb_init %}
+  {{ super }}
+  
+
+    var checkExistingSocialUser = function(provider, userId, callback) {
+      var url = '/checksocialuser/' + provider + '/' + userId + '/';
+      $.ajax({
+        url: url
+      }).done(function(response){
+        callback(null, response.found);
+      }).fail(function(xhr){
+        callback('Something goes wrong!', false);
+      });
+    };
+
+    var connectFacebook = function(self, userId) {
+      checkExistingSocialUser('facebook', userId, function(err, found){
+        if (err || found){
+          bootbox.dialog({
+            message: err || 'The account is already linked to another Yoloify user.',
+            title: "Oops!",
+            buttons: {
+              success: {
+                label: "Okay",
+                className: "btn-danger"
+              }
+            }
+          });
+          self.removeClass('loading');
+        }
+        else {
+          window.location = '/login/facebook?next=/friends/?facebook';
+        }
+      })
+    };
+
+    $(".facebook-connect").click(function(){
+      if ($(this).hasClass('loading')) return ;
+
+      var self = $(this);
+      $(this).addClass('loading');
+      FB.login(function(response){
+        if(response.authResponse) {
+          connectFacebook(self, response.authResponse.userID);
+        } else {
+          bootbox.dialog({
+            message: "Couldn't connect. You must authorize Yoloify.",
+            title: "Oops!",
+            buttons: {
+              success: {
+                label: "Okay",
+                className: "btn-danger"
+              }
+            }
+          });
+          self.removeClass('loading');
+        }
+      }, {scope: 'email'});
+
+      return false;
+    });
+{% endblock %}
+</script>

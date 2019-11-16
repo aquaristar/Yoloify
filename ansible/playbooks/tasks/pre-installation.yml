@@ -1,0 +1,14 @@
+- name: Install common dependencies
+  apt: "state=installed pkg={{ item }} update_cache=yes"
+  with_items: system_packages
+  when: system_packages is defined
+
+- name: Install project dependencies
+  apt: "state=installed pkg={{ item }} update_cache=yes"
+  with_items: project_system_packages
+  when: project_system_packages is defined
+
+- name: Make sure log dir(s) exists
+  file: path={{ item }} state=directory mode=0777 recurse=yes
+  with_items: log_dirs
+  when: log_dirs is defined

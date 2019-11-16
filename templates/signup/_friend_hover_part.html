@@ -1,0 +1,11 @@
+<div class="friend-hover-menu clearfix">
+  {% if tab == 'facebook' %}
+      <a href="javascript:void(0)" data-friend-id="{{ friend.id }}" class="facbookinvite btn">Invite</a>
+  {% else %}
+    {% if friend.pk in following %}
+      <a href="javascript:void(0)" data-friend-id="{{ friend.pk }}" class="unfollow btn">Unfollow</a>  
+    {% else %}
+      <a href="javascript:void(0)" data-friend-id="{{ friend.pk }}" class="follow btn">Follow</a>
+    {% endif %}
+  {% endif %}
+</div>

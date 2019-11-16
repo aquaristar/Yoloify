@@ -1,0 +1,11 @@
+{% load i18n %}
+{% blocktrans %}Hi Anthony,
+
+Issue : {{type}}
+
+{{message}}
+
+Thanks,
+{{name}}
+{{email}}
+{% endblocktrans %}

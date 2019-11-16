@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load thumbnail i18n %}
+{% block og_basic %}
+    <meta property="og:title" content="Search | YOLOify"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}/search"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}/search">
+    <meta name="twitter:title" content=" Search | YOLOify"/>
+    <title>{% block title %} Search | YOLOify {% endblock %}</title>
+{% endblock %}
+{% block body_class %}search profile{% endblock %}
+
+{% block nav_search %}<li class="active"><a href="{% url "search" %}"><span class="glyphicon glyphicon-search"></span> {% trans "SEARCH" %}</a></li>{% endblock %}
+
+{% block container %}
+  <div class="media">
+    <nav class="filters">
+      <form class="form-inline" role="form">
+        <input type="text" name="query" value="{{ query|escape }}" class="form-control" placeholder="{% trans "Press Enter to Search" %}" />
+      </form>
+    </nav>
+  </div>
+
+  {% include "pinboard/_pin_popup.html" %}
+
+  <div class="container">
+    <div class="tab-content">
+      <div class="tab-pane active pinboard-container">
+      {% if query %}
+        <ul class="pinboard list-unstyled">
+          <div id="next-url" style="visibility: hidden; position: absolute;" data-next-url="/next-part/search/?part_number=0&query={{ query }}"></div>
+        </ul>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+  var pin = new Pin();
+  var pinModal = new PinModal({model: pin});
+  pinModal.on('destroy', function() {
+    window.location.href = '/search/';
+  });
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+  lazyStart(function () {
+      // bind pinboard to modals
+      $('.pinboard .pin a.zoom').click(function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        pin.set({id: id});
+        pinModal.open();
+      });
+  });
+
+{% endblock %}
+</script>

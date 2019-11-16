@@ -1,0 +1,46 @@
+<div id="{{ id }}" class="modal fellas-modal" tabindex="-1" role="dialog" aria-labelledby="{{ id }}Title" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 id="{{ id }}Title" class="modal-title">{{ title }}</h4>
+      </div>
+      <div class="modal-body">
+      {% if fellas %}
+        <ul class="fellas">
+        {% for fella in fellas %}
+          <li>
+          {% if fella.userpic %}
+            <img src="{{ fella.userpic_url }}" width="40" height="40" alt="" />
+          {% else %}
+            <img src="{{ STATIC_URL }}img/userpic.png" width="40" height="40" alt="" />
+          {% endif %}
+            <a href="{% url "profile" fella.id %}">{{ fella.user.get_full_name }}</a>
+          </li>
+        {% endfor %}
+        </ul>
+      {% else %}
+        {% if id == "followersModal" %}
+          <div class="alert alert-info">
+            {% if profile.user == user %}
+              Nobody is following you.
+            {% else %}
+              This user has no followers.
+            {% endif %}
+          </div>
+        {% endif %}
+        {% if id == "followingModal" %}
+          <div class="alert alert-info">
+            {% if profile.user == user %}
+              You aren't following anyone. <a href="/friends/?search">Search</a> for friends.
+            {% else %}
+              This user is not following anyone.
+            {% endif %}
+          </div>
+        {% endif %}
+
+      {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

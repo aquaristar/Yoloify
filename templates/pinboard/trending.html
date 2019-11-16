@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load thumbnail i18n %}
+{% block og_basic %}
+    <meta property="og:title" content="Trending on YOLOify"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}/trending"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}/trending">
+    <meta name="twitter:title" content=" Trending on YOLOify"/>
+
+    <title>{% block title %}Trending on YOLOify {% endblock %}</title>
+{% endblock %}
+
+
+{% block body_class %}trending profile{% endblock %}
+{% block nav_trending %}<li class="active"><a href="{% url "trending" %}"><span class="glyphicon glyphicon-fire"></span> {% trans "TRENDING" %}</a></li>{% endblock %}
+
+
+{% block container %}
+ 
+  {% include "pinboard/_pin_popup.html" %}
+  
+  <div class="media"></div>
+  <nav>
+    <div class="dropdown section-dropdown hidden-lg hidden-md">
+      <button class="btn btn-default btn-block dropdown-toggle" type="button" id="dropdownSection" data-toggle="dropdown">
+      {% if section == 'all' %}
+        Most Bookmarked
+      {% elif section == 'recent' %}
+        Recently Created
+      {% elif section == 'completed' %}
+        Most Visited
+      {% elif section == 'friends' %}
+        Most Bookmarked Among Friends
+      {% endif %}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownSection">
+        <li{% if section == 'all' %} class="active"{% endif %} role="presentation"><a role="menuitem" tabindex="-1" href="./">Most Bookmarked</a></li>
+        <li{% if section == 'recent' %} class="active"{% endif %} role="presentation"><a role="menuitem" tabindex="-1" href="./?recent">Recently Created</a></li>
+        <li{% if section == 'completed' %} class="active"{% endif %} role="presentation"><a role="menuitem" tabindex="-1" href="./?completed">Most Visited</a></li>
+        <li{% if section == 'friends' %} class="active"{% endif %} role="presentation"><a role="menuitem" tabindex="-1" href="./?friends">Most Bookmarked Among Friends</a></li>
+      </ul>
+    </div>
+    <ul class="nav nav-tabs container hidden-sm hidden-xs">
+      <li{% if section == 'all' %} class="active"{% endif %}><a href="./">{% blocktrans %}Most Bookmarked{% endblocktrans %}</a></li>
+      <li{% if section == 'recent' %} class="active"{% endif %}><a href="./?recent">{% blocktrans %}Recently Created{% endblocktrans %}</a></li>
+      <li{% if section == 'completed' %} class="active"{% endif %}><a href="./?completed">{% blocktrans %}Most Visited{% endblocktrans %}</a></li>
+      <li{% if section == 'friends' %} class="active"{% endif %}><a href="./?friends">{% blocktrans %}Most Bookmarked Among Friends{% endblocktrans %}</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <div class="tab-content">
+      <div class="tab-pane active pinboard-container">
+      {% if more %}
+        <ul class="pinboard list-unstyled">
+        {% with pins=pins pinboard_name=pinboard_name part_number=part_number more=more %}
+        {% include "pinboard/_pinboard_part.html" %}
+        {% endwith %}
+        </ul>
+      {% else %}
+      <div class="alert alert-info">
+        No places have been visited.
+      </div>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+  var pin = new Pin();
+  var pinModal = new PinModal({model:pin});
+  pinModal.on('destroy', function() {
+    window.location.href = '/trending/';
+  });
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+  lazyStart(function () {
+      // bind pinboard to modals
+      $('.pinboard .pin a.zoom').click(function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        pin.set({id: id});
+        pinModal.open();
+      });
+  });
+
+{% endblock %}
+</script>

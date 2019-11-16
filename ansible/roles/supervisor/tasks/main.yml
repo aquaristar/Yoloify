@@ -1,0 +1,28 @@
+- name: "pip | install supervisor"
+  pip: name=supervisor version={{supervisor_version}}
+
+- name: "create default supervisor.conf"
+  template: src={{supervisor_conf}} dest=/etc/supervisord.conf
+
+- name: Supervisor | install supervisord upstart jobs
+  template: >
+    src={{supervisord_upstart}}
+    dest=/etc/init/supervisord.conf
+    
+- name: "create /etc/supervisor/conf.d directory"
+  file: path=/etc/supervisor/conf.d state=directory
+
+- name: Supervisor | checking if supervisord is running
+  shell: pgrep supervisor
+  ignore_errors: on
+  changed_when: off
+  register: supervisor_running
+
+- name: start supervisor
+  service: name=supervisord state=started
+  when: supervisor_running|failed
+
+- name: "create supervisor task"
+  template: src=task.j2 dest=/etc/supervisor/conf.d/{{supervisor.command_name}}.conf
+  notify: supervisor present
+  when: supervisor is defined

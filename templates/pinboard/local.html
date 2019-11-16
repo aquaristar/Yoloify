@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block og_basic %}
+    <title>{% block title %}Discover beautiful hikes, activities, and places both locally and while traveling! | YOLOify{% endblock %}</title>
+    <meta property="og:title" content="Discover places, hikes, events, and activities today!"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}/map/?utm_source=Social&utm_medium=Share&utm_campaign=OG_Share"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}/map">
+    <meta name="twitter:title" content="Discover local places, hikes, events, and activities today!">
+    <meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta name="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta property="og:description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!"/>
+    <meta name="twitter:description" content="Join YOLOify to discover breathtaking hikes, places, and other amazing activities both locally and while traveling!">
+    <html itemscope itemtype="http://schema.org/LocalBusiness">
+    <meta itemprop="name" content="Discover places, hikes, events, and activities today!">
+    <meta itemprop="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta itemprop="image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg">
+    
+{% endblock %}
+{% block meta %}
+  {% if request.GET.ref == "signup" %}
+    <!-- Facebook Conversion Code for YOLOify Signup -->
+    <script>(function() {
+      var _fbq = window._fbq || (window._fbq = []);
+      if (!_fbq.loaded) {
+        var fbds = document.createElement('script');
+        fbds.async = true;
+        fbds.src = '//connect.facebook.net/en_US/fbds.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(fbds, s);
+        _fbq.loaded = true;
+      }
+    })();
+    window._fbq = window._fbq || [];
+    window._fbq.push(['track', '6016443546042', {'value':'0.00','currency':'USD'}]);
+    </script>
+    <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6016443546042&amp;cd[value]=0.00&amp;cd[currency]=USD&amp;noscript=1" /></noscript>
+  {% endif %}
+{% endblock %}
+{% block body_class %}local profile{% endblock %}
+
+{% block nav_local %}<li class="active"><a href="{% url "local" %}"><span class="glyphicon glyphicon-map-marker"></span> {% trans "LOCAL" %}</a></li>{% endblock %}
+
+
+
+{% block container %}
+  <div class="media">
+    <div class="container hidden-xs">
+      <div class="header-title">Select a city to discover new places and adventures!</div>
+    </div>
+	<div class="container visible-xs">
+      <div class="header-title">Explore your City</div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="tab-content">
+      <section id="cities" class="city">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-10 col-lg-offset-1 text-center">
+              <div class="row">
+                {% for city in cities %}
+                  <div class="col-md-6">
+                    <div class="city-item" style="visibility: hidden";>
+                      <a href="{{ city.get_absolute_url }}" title="Discover top things to do in {{ city.name }}">
+                        {% with city.generate_thumbnail as thumb %}
+                        <img class="img-city img-responsive lazy" data-src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
+                        {% endwith %}
+                        <div class="caption">
+                          <h3>{{ city.name }}</h3>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                {% empty %}
+                  <p class="no-results">{% blocktrans %}Sorry, there are no cities {% endblocktrans %}</p>
+                {% endfor %}
+              </div>
+              
+              <!-- /.row (nested) -->
+            
+            </div>
+            <!-- /.col-lg-10 -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.container -->
+      </section>
+    </div>
+  </div>
+{% endblock %}
+{% block js %}{{ super }}
+  <script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+  <script>
+    lazyImageLoad('.city-item', function(){
+    });
+  </script>
+{% endblock %}

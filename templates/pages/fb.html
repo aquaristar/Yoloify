@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load i18n webdesign %}
+
+{% block body_class %}home{% endblock %}
+
+{% block container %}
+
+    
+ <!-- Header -->
+  <header id="top" class="header">
+    <div class="text-vertical-center">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="hero-wrapper">
+          <div class="hero-container">
+            <div class="hero-intro">
+              <div class="hidden-xs">
+                <h1>Do Something Epic</h2>
+                <h2>Discover amazing local places and activities</h1>
+                <div class="explore ">
+                  <a class="btn btn-primary fb-home" href="/login/facebook/">Join YOLOify</a>>
+                </div>
+              </div>
+              <div class="visible-xs">
+                <h1>Do Something Epic</h2>
+                <h2>Discover local places and activities</h1>
+                <div class="explore ">
+                  <a class="btn btn-primary fb-home" href="/login/facebook/">Join YOLOify</a>>
+                </div>    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+		  <a class="copyright hidden-xs" target="_blank" href="https://www.flickr.com/photos/michaelmattiphotography/"><u>Photo by Michael Matti</u></a>
+    </div>
+  </header>
+
+	 <!-- Portfolio -->
+  
+<section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 text-center  hidden-xs">
+                    <div class="hidden-xs"><h1>Discover the top activities and places in your city</h1></div>
+					<div class="visible-xs"><h1>Explore your City</h1></div>
+                    <hr class="small">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="portfolio-item">
+                                <a href="http://yoloify.com/local/1/things-to-do-in-seattle/" title="Discover top things to do in Seattle">
+                                    <img class="img-portfolio img-responsive" src="{{ STATIC_URL }}img/portfolio-1.jpg">
+									<span class="caption">
+            <h3 class="park-name ng-binding">Seattle</h3>
+          
+          </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="portfolio-item">
+                                <a href="#" title="Discover top things to do in Portland">
+                                    <img class="img-portfolio img-responsive" src="{{ STATIC_URL }}img/portfolio-2.jpg">
+									<span class="caption">
+            <h3 class="park-name ng-binding">Coming Soon!</h3>
+          
+          </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="portfolio-item">
+                                <a href="#"  title="Discover top things to do in San Francisco">
+                                    <img class="img-portfolio img-responsive" src="{{ STATIC_URL }}img/portfolio-3.jpg">
+									<span class="caption">
+            <h3 class="park-name ng-binding">Coming Soon!</h3>
+          
+          </span>
+                                </a>
+                            </div>
+                        </div>
+				<div class="col-md-6">
+                      <div class="portfolio-item">
+                <a href="#"   title="Discover top things to do in Los Angeles">
+                <img class="img-portfolio img-responsive" src="{{ STATIC_URL }}img/portfolio-4.jpg">
+                                
+				<span class="caption">
+            <h3 class="park-name ng-binding">Coming Soon!</h3>
+          
+          </span>
+  </a>                          </div>
+                        </div>
+                    </div>
+                    <!-- /.row (nested) -->
+                    <a href="{% url "local" %}" class="btn btn-danger more-cities-btn">Explore More Cities!</a>
+                </div>
+                <!-- /.col-lg-10 -->
+				 <div id="facepile">
+    <fb:facepile width="180" max_rows="1" colorscheme="dark" class=" fb_iframe_widget" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=680458435349320&amp;color_scheme=dark&amp;locale=en_US&amp;max_rows=1&amp;sdk=joey&amp;width=180">
+<span style="vertical-align: bottom; width: 200px; height: 70px;">
+
+<iframe name="f1fa7c8804" width="180px" height="1000px" frameborder="0" allowtransparency="true" scrolling="no" title="fb:facepile Facebook Social Plugin" src="http://www.facebook.com/plugins/facepile.php?app_id=680458435349320&amp;
+
+
+channel=http%3A%2F%2Fstatic.ak.facebook.com%2Fconnect%2Fxd_arbiter%2F7r8gQb8MIqE.js%3Fversion%3D41%23cb%3Df282be3d5c%26domain%yoloify.com%26origin%3Dhttp%253A%252F%252Fyoloify.com%252Ff2ab811f4%26relation%3Dparent.parent&amp;
+color_scheme=dark&amp;locale=en_US&amp;max_rows=1&amp;sdk=joey&amp;width=180" style="border: none; visibility: visible; width: 200px; height: 70px;" class=""></iframe>
+
+
+</span>
+    </fb:facepile>
+</div>
+<div class="mobile-credit visible-xs"><a class="credit" target="_blank" href="https://www.flickr.com/photos/michaelmattiphotography/"><u>Photo by Michael Matti</u></a> </div>
+
+             </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container -->
+    </section>
+ <div id="fb-root"></div>
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <ul class="list-inline quicklinks">
+              <li><a href="/about">About</a>
+              </li>
+              <li>&#183;&nbsp;&nbsp;&nbsp;<a href="/about/#careers">Join our crew</a>
+              </li>
+              <li>&#183;&nbsp;&nbsp;&nbsp;<a href="/about/#contact">Contact</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <ul class="list-inline social-buttons">
+              <li><a href="https://www.facebook.com/yoloify" target="blank_"><i class="fa fa-fw fa-facebook"></i></a>
+              </li>
+              <li><a href="https://plus.google.com/+Yoloify" target="blank_"><i class="fa fa-fw fa-google-plus"></i></a>
+              </li>
+              <li><a href="https://twitter.com/yoloify_" target="blank_"><i class="fa fa-fw fa-twitter"></i></a>
+              </li>
+              <li><a href="https://instagram.com/yoloify/" target="blank_"><i class="fa fa-fw fa-instagram"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <span class="copyright">Made with <span class="heart">❤</span> in Seattle</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ super }}
+  // Confirmation resend modal
+  {
+    var $modal = $('#resendModal');
+    var $alert = $('.alert-form.alert-success');
+    var signup_form = new AjaxForm({
+      el: $('form', $modal),
+      onSuccess: function(data) {
+        $alert.html(data).removeClass("hide");
+      },
+      onErrors: function() {
+        $('.modal-content', $modal).effect('shake');
+      }
+    });
+  }
+{% endblock %}
+</script>
+
+<script>
+{% block fb_init %}
+  // http://stackoverflow.com/questions/16843116/facebook-oauth-unsupported-in-chrome-on-ios
+  if (!navigator.userAgent.match('CriOS')) { // match iOS Chrome
+    $(".facebook-login").click(function(){
+      FB.getLoginStatus(function(response){
+        if(response.status == "connected") {
+          window.location = '/login/facebook';
+        } else {
+          FB.login(function(response){
+            if(response.authResponse) {
+              //successful login
+              window.location = '/login/facebook';
+            } else {
+              //fail
+            }
+          }, {scope: 'email'});
+        }
+      });
+      return false;
+    });
+  }
+{% endblock %}
+</script>

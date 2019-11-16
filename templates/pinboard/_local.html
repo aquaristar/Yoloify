@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load thumbnail i18n %}
+{% load cache %}
+
+{% block body_class %}profile{% endblock %}
+
+{% block nav_profile %}<li{% if profile.user == user %} class="active"{% endif %}><a href="{% url "profile" %}"><span class="glyphicon glyphicon-th"></span> My List</a></li>{% endblock %}
+
+{% block container %}
+  <div class="media">
+    <div class="container local-settings">
+      <div class="well">
+        <form class="form-inline" role="form">
+          <div class="form-group">
+            <label for="sel_most_popular">Most Popular</label>
+            <select id="sel_most_popular" class="form-control sel-most-popular">
+              <option value="category">Category</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sel_among">Among</label>
+            <select id="sel_among" class="form-control sel-among">
+              <option value="category">Everyone</option>
+              <option value="category">Friends</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="input_distance">Within</label>
+            <input type="number" class="form-control input-distance" id="input_distance" placeholder="distance" value="20">
+          </div>
+          <div class="form-group">
+            <label for="input_zip">miles of</label>
+            <input type="text" class="form-control input-zip" id="input_zip" placeholder="Zip code">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {% cache 500 profile-popups %}
+    {% include "pinboard/_pin_popup.html" %}
+  {% endcache %}
+
+  <div class="container cities">
+    <div class="tab-content">
+      <div class="tab-pane active local-container">
+
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+  var pin = new Pin();
+  var pinModal = new PinModal({model: pin});
+
+  pinModal.on('destroy', function() { window.location.reload(); });
+
+  $('div.followbox').on('mouseenter', '.unfollow', function() {
+    $(this).addClass('btn-danger');
+  }).on('mouseleave','.unfollow',  function(){
+    $(this).removeClass('btn-danger');
+  });
+
+  $('div.followbox').on('click', '.follow', function (e) {
+    if (!$(this).hasClass('loading')){
+      var self = $(this),
+          friendId = $(this).attr('data-profile-id'),
+          url = '/follow/' + friendId + '/';
+      console.log(url);
+      $(this).removeClass('follow');
+      $(this).addClass('loading');
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: "json"
+      }).done(function( responseText ) {
+
+        self.addClass('unfollow').html('Following');
+
+      }).fail(function(xhr, status, error){
+
+        self.addClass('follow');
+
+      }).complete(function( jqXHR, status ) {
+
+        self.removeClass('loading');
+
+      });
+
+    }
+  });
+
+  $('div.followbox').on('click', '.unfollow', function (e) {
+    if (!$(this).hasClass('loading')){
+      var self = $(this),
+          friendId = $(this).attr('data-profile-id'),
+          url = '/unfollow/' + friendId + '/';
+      console.log(url);
+      $(this).removeClass('unfollow');
+      $(this).addClass('loading');
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: "json"
+      }).done(function( responseText ) {
+
+        self.addClass('follow').html('Follow Me');
+
+      }).fail(function(xhr, status, error){
+
+        self.addClass('unfollow');
+
+      }).complete(function( jqXHR, status ) {
+
+        self.removeClass('loading');
+        self.removeClass('btn-danger');
+
+      });
+
+    }
+  });
+
+  $('button.followers').popover({ container: 'body' });
+{% endblock %}
+</script>

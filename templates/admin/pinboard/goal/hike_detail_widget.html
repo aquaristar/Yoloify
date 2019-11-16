@@ -1,0 +1,46 @@
+<br /><br />
+<div id="{{ name }}_hike_detail">
+  <input type="hidden" name="{{ name }}" value="{{ value }}" />
+  <input class="trail" type="text" placeholder="trail length" value="{{ detail.trail.amount }}" />
+  <select class="trail_unit">
+    <option>Kilometers</option>
+    <option{% if detail.trail.unit == 'Miles' %} selected="selected"{% endif %}>Miles</option>
+  </select>
+  <br />
+
+  <input class="elevation" type="text" placeholder="elevation gain" value="{{ detail.elevation.amount }}" />
+  <select class="elevation_unit">
+    <option>Feet</option>
+    <option{% if detail.elevation.unit == 'Meters' %} selected="selected"{% endif %}>Meters</option>
+  </select>
+  <br />
+
+  <input class="highest" type="text" placeholder="highest point" value="{{ detail.highest.amount }}" />
+  <select class="highest_unit">
+    <option>Feet</option>
+    <option{% if detail.highest.unit == 'Meters' %} selected="selected"{% endif %}>Meters</option>
+  </select>
+</div>
+
+<script>
+$(function() {
+  var $div = $('#{{ name }}_hike_detail');
+  $(':input', $div).change(function() {
+    var payload = {
+      'trail': {
+        'amount': $('.trail', $div).val(),
+        'unit': $('.trail_unit', $div).val(),
+      },
+      'elevation': {
+        'amount': $('.elevation').val(),
+        'unit': $('.elevation_unit').val()
+      },
+      'highest': {
+        'amount': $('.highest').val(),
+        'unit': $('.highest_unit').val()
+      }
+    }
+    $('[name={{ name }}]').val(JSON.stringify(payload));
+  }).change();
+});
+</script>

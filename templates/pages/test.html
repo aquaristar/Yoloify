@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+
+  <div id="pinModal"  class="modal" role="dialog" aria-labelledby="login_modal_label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="title  modal-title"></h4>
+        </div>
+        <div class="modal-body">
+          <img class="loader" src="{{ STATIC_URL }}img/ajax-loader.gif" width="32" height="32" alt="" />
+          <img class="image" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="complete  btn btn-primary btn-block">{% trans "Complete" %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="showPin  btn btn-primary" type="button">Show Pin</button>
+
+
+  <form id="completePin"  method="POST" class="form-inline">
+    <input type="hidden" name="_method" value="PATCH" />
+
+    <p class="server-error"></p>
+
+    <div class="form-group">
+      <input name="title"  type="text" class="form-control" />
+      <p class="error  help-block"></p>
+    </div>
+
+    <div class="form-group">
+      <input name="completed"  type="text" class="form-control" />
+      <p class="error  help-block"></p>
+    </div>
+
+    <img class="loader"  src="{{ STATIC_URL }}img/ajax-loader.gif" width="32" height="32" alt="" />
+    <button type="submit"  class="btn btn-primary">Set Date</button>
+  </form>
+
+{% endblock %}
+
+<script type="text/javascript">
+{% block js_init %}{{ block.super }}
+  var pin = new Pin({id: 1});
+
+  var pinModal = new PinModal({model: pin});
+
+  $('button.showPin').click(function() {
+    pinModal.open();
+  });
+
+  var completeForm = new AjaxForm({
+    el: $('form#completePin'),
+    model: pin
+  });
+{% endblock %}
+</script>

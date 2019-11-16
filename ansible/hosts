@@ -1,0 +1,5 @@
+[tag_beta]
+107.170.246.47 ansible_connection=ssh ansible_ssh_user=dev
+
+[tag_dev]
+192.241.195.113 ansible_connection=ssh ansible_ssh_user=dev

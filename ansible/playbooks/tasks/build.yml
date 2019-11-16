@@ -1,0 +1,66 @@
+---
+- name: Installs nginx web server
+  apt: pkg=nginx state=installed update_cache=true
+
+- name: Install and configure redis server
+  apt: pkg=redis-server state=installed update_cache=true
+
+- name: Install and configure memcache
+  apt: pkg=memcached state=installed update_cache=true
+
+- name: Pull sources from the repository
+  git: repo={{ project.repo }} dest={{ project.root }} version={{git_branch}} key_file={{project.ssh_key}}
+  tags:
+    - deploy
+
+- name: Install project requirements
+  pip: requirements={{ project.requirements }} virtualenv={{ project.virtualenv }}
+  tags:
+    - deploy
+
+- name: Copy settings
+  shell: rsync -ci {{project.root}}/yoloify/{{server}}_settings.py {{project.root}}/yoloify/local_settings.py
+  register: rsync_result
+  changed_when: "rsync_result.stdout != ''"
+  ignore_errors: yes
+  tags:
+    - deploy
+
+- name: Django collectstatic
+  django_manage: command=collectstatic
+                 app_path={{project.root}}
+                 virtualenv={{project.virtualenv}}
+                 settings={{project.django_settings}}
+  tags:
+    - deploy
+
+#- name: Compress static
+#  django_manage: command='compress --force'
+#                 app_path={{project.root}}
+#                 virtualenv={{project.virtualenv}}
+#                 settings={{project.django_settings}}
+#  tags:
+#    - deploy
+
+
+- name: Django syncdb
+  django_manage: command=syncdb
+                 app_path={{project.root}}
+                 virtualenv={{project.virtualenv}}
+                 settings={{project.django_settings}}
+  tags:
+    - deploy
+
+
+- name: Django migrate
+  django_manage: command=migrate
+                 app_path={{project.root}}
+                 virtualenv={{project.virtualenv}}
+                 settings={{project.django_settings}}
+  tags:
+    - deploy
+
+- name: Change owner for Whoosh index directory
+  file: path=/home/yoloify/data/ owner=yoloify group=yoloify state=directory recurse=yes mode=0777
+  tags:
+    - deploy

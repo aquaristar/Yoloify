@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load thumbnail i18n %}
+{% block og_basic %}
+    <title>{% block title %}Discover beautiful hikes, activities, and places both locally and while traveling! | YOLOify{% endblock %}</title>
+    <meta property="og:title" content="Discover places, hikes, events, and activities today!"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}/map/?utm_source=Social&utm_medium=Share&utm_campaign=OG_Share"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}/map">
+    <meta name="twitter:title" content="Discover local places, hikes, events, and activities today!">
+    <meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta name="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta property="og:description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!"/>
+    <meta name="twitter:description" content="Join YOLOify to discover breathtaking hikes, places, and other amazing activities both locally and while traveling!">
+    <html itemscope itemtype="http://schema.org/LocalBusiness">
+    <meta itemprop="name" content="Discover places, hikes, events, and activities today!">
+    <meta itemprop="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta itemprop="image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg">
+    
+{% endblock %}
+{% block body_class %}map profile{% endblock %}
+
+{% block nav_explore %}<li class="active"><a href="{% url "map" %}"><span class="glyphicon glyphicon-globe"></span> {% trans "EXPLORE" %}</a></li>{% endblock %}
+
+
+{% block navbar-header %}
+  <a href="#" class="local-filter-toggle"><span title="Filters" class="glyphicon glyphicon-filter"></span></a>
+{% endblock %}
+
+{% block container %}
+  <div class="media">
+    <form class="form-inline filters" role="form">
+      <div id="view-switch">
+        <div class="btn-group">
+          <a href="{% url "map_list" %}" class="list btn btn-default" title="{% trans "Toggle to List View" %}"><span class="glyphicon glyphicon-th-large"></span></a>
+          <a class="map btn btn-default disabled" title="{% trans "Current View" %}"><span class="glyphicon glyphicon-map-marker"></span></a>
+        </div>
+      </div>
+      <nav class="filters">
+        <input type="hidden" name="top" />
+        <input type="hidden" name="bottom" />
+        <input type="hidden" name="left" />
+        <input type="hidden" name="right" />
+        <div class="form-group">
+          <select name="category" class="form-control input-s">
+            <option value="" selected="selected">{% trans "All categories" %}</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}">{{ category }}</option>
+          {% endfor %}
+          </select>
+        </div>
+      {% if user.is_authenticated %}
+        <div class="form-group">
+          <label for="among">among</label>
+          <select name="among" class="form-control">
+            <option value="everyone" selected="selected">Everyone</option>
+            <option value="friends">Friends</option>
+          </select>
+        </div>
+      {% endif %}
+        <div class="form-group geocomplete-group">
+          <label for="geocomplete">near</label>
+          <div class="input-group">
+            <div class="input-group-addon">
+              <a class="geolocation" href="#" title="Find My Location"><span class="glyphicon glyphicon-record"></span></a>
+            </div>
+            <input type="text" name="geocomplete" placeholder="Enter city, state, zip or country" value="" class="form-control input-l" />
+          </div>
+        </div>
+      </nav>
+  </form>
+  </div>
+
+  {% include "pinboard/_pin_popup.html" %}
+
+  <div id="map-view" class="container">
+    <div class="tab-content">
+      <div id="map"></div>
+
+      <div id="map-pins">
+        <div class="tab-pane active pinboard-container">
+          <script type="text/template" class="pinboard-starter">
+            <ul class="pinboard list-unstyled">
+              <div id="next-url" style="visibility: hidden; position: absolute;" data-next-url="/next-part/map/<%= q %>"></div>
+            </ul>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+  window.pin = new Pin();
+  window.pinModal = new PinModal({model: pin});
+  pinModal.on('destroy', function() {
+    window.location.href = '/map/';
+  });
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+  var filterForm = new LocalFilterForm({ignoreGeocomplete: true});
+  var mapView = new MapView({
+    zoom: {% if user.is_authenticated%}7{% else %}2{% endif %},
+    filterForm: filterForm
+  });
+  mapView.on('mapInit', function() {
+    google.maps.event.addListener(mapView.map, 'idle', function () {
+      var bounds = mapView.map.getBounds();
+      if (bounds) {
+        filterForm.$(':input[name=left]').val(bounds.getSouthWest().lng());
+        filterForm.$(':input[name=right]').val(bounds.getNorthEast().lng());
+        filterForm.$(':input[name=top]').val(bounds.getNorthEast().lat());
+        filterForm.$(':input[name=bottom]').val(bounds.getSouthWest().lat()).change(); // trigger!
+      }
+    });
+  });
+
+  {# On error geolocating by postal code #}
+  function geocompleteFallback() {
+    mapView.map.setZoom(2);
+    mapView.map.setCenter(new google.maps.LatLng(30,-100));
+  }
+  filterForm.$geocomplete.one('geocode:error', geocompleteFallback);
+  filterForm.$geocomplete.one('geocode:result', function() { filterForm.$geocomplete.off('geocode:error', geocompleteFallback); });
+
+  filterForm.$geocomplete.bind('geocode:result', function(event, result) {
+    var viewport;
+    if (result.geometry.viewport)
+      viewport = result.geometry.viewport;
+    else {
+      viewport = new google.maps.LatLngBounds();
+      viewport.extend(result.geometry.location);
+    }
+    mapView.map.fitBounds(viewport);
+  });
+{% if user.is_authenticated %}
+  mapView.map.setCenter(new google.maps.LatLng(30,-100));
+  mapView.map.setZoom(2);
+{% endif %}
+
+{% if user.is_anonymous %}
+  mapView.map.setCenter(new google.maps.LatLng(30,-100));
+  mapView.map.setZoom(2);
+{% endif %}
+{% endblock %}
+</script>

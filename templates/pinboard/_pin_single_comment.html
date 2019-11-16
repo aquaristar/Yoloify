@@ -1,0 +1,22 @@
+<li class="comment">
+  <div class="comment-wrap">
+    <a class="flag-comment glyphicon glyphicon-flag" href="javascript:;" data-comment="{{ comment.id}}">
+    </a>
+    <div class="comment-description">
+      <a class="user-thumb-wrap" href="{% url "profile" comment.user.profile.id %}">
+      {% if comment.user.profile.userpic %}
+        <img class="user-thumb img-circle" src="{{  comment.user.profile.userpic_url }}" alt="{{ comment.user.get_full_name }}" />
+      {% else %}
+        <img class="user-thumb img-circle" src="{{ STATIC_URL }}img/userpic.png" alt="{{ comment.user.get_full_name }}" />
+      {% endif %}
+      </a>
+      <div class="comment-content">
+        <div class="commenter">
+          <a class="commenter-name" href="{% url "profile" comment.user.profile.id %}">{{ comment.user.get_full_name }}</a>
+          <span class="comment-time">• {{ comment.submit_date|timesince }} ago </span>
+        </div>
+        <p class="comment-text">{{ comment.comment }}</p>
+      </div>
+    </div>
+  </div>
+</li>

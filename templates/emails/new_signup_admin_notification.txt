@@ -1,0 +1,10 @@
+{% load i18n %}
+{% blocktrans %}Hello admin,
+
+A new user has registered in YOLOify. The user information follows below.
+
+UserId : {{id}}
+Name : {{name}}
+email : {{email}}
+
+{% endblocktrans %}

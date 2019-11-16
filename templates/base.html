@@ -1,0 +1,397 @@
+<!DOCTYPE html>{% load compress crispy_forms_tags i18n %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Language" content="en">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="application-name" content="YOLOify"/>
+  <meta name="msapplication-TileColor" content="#333333"/>
+  <meta name="msapplication-square70x70logo" content="http://{{ SITE_DOMAIN }}/static/img/tiny.png"/>
+  <meta name="msapplication-square150x150logo" content="http://{{ SITE_DOMAIN }}/static/img/square.png"/>
+  <meta name="msapplication-wide310x150logo" content="http://{{ SITE_DOMAIN }}/static/img/wide.png"/>
+  <meta name="msapplication-square310x310logo" content="http://{{ SITE_DOMAIN }}/static/img/large.png"/>
+  <meta name="msapplication-starturl" content="http://www.yoloify.com/">
+  <meta name="msapplication-navbutton-color" content="#333333">
+  <meta name="msapplication-window" content="width=1200;height=768">
+  <meta name="msapplication-tooltip" content="Go to YOLOify.com">
+
+  {# Open Social Graph Meta Tags #}
+  {% block og_basic %}
+    <html itemscope itemtype="http://schema.org/LocalBusiness">
+    <meta itemprop="name" content="Discover places, hikes, events, and activities today!">
+    <meta itemprop="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta itemprop="image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg">
+    
+    <meta property="og:title" content="Discover places, hikes, events, and activities today!"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}/"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}/">
+    <meta name="twitter:title" content="Discover local places, hikes, events, and activities today!">
+    <meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta name="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta property="og:description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!"/>
+    <meta name="twitter:description" content="Join YOLOify to discover breathtaking hikes, places, and other amazing activities both locally and while traveling!">
+    <title>{% block title %}Discover beautiful hikes, activities, and places both locally and while traveling! | YOLOify{% endblock %}</title>
+  {% endblock %}
+
+
+
+  <meta property="fb:app_id" content="680458435349320">
+  <meta property="og:site_name" content="YOLOify"/>
+  <link href="https://plus.google.com/108132530925773777480/" rel="publisher">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@YOLOify_">
+  <meta name="twitter:creator" content="@anthonyjgrove">
+
+  {% compress css %}
+    <link href="{{ STATIC_URL }}css/bootstrap-tagsinput.css" rel="stylesheet" type="text/css">
+    <link href="{{ STATIC_URL }}font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}less/yoloify.less"/>
+    <link rel="stylesheet" type="text/less" media="screen and (max-width: 720px)" href="{{ STATIC_URL }}less/mobile.less"/>
+    {% block page_css %}
+    {% endblock %}
+  {% endcompress %}
+
+  {% block css %}{% endblock %}
+
+  {# HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries #}
+  <!--[if lt IE 9]>
+        <script src="{{ STATIC_URL }}js/vendor/html5shiv.js"></script>
+        <script src="{{ STATIC_URL }}js/vendor/respond.min.js"></script>
+      <![endif]-->
+
+  {% block meta %}
+  {% endblock %}
+  <!-- Facebook Conversion Code for Page View - All -->
+  <script>(function() {
+    var _fbq = window._fbq || (window._fbq = []);
+    if (!_fbq.loaded) {
+      var fbds = document.createElement('script');
+      fbds.async = true;
+      fbds.src = '//connect.facebook.net/en_US/fbds.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(fbds, s);
+      _fbq.loaded = true;
+    }
+  })();
+  window._fbq = window._fbq || [];
+  window._fbq.push(['track', '6021945768442', {'value':'0.00','currency':'USD'}]);
+  </script>
+  <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6021945768442&amp;cd[value]=0.00&amp;cd[currency]=USD&amp;noscript=1" /></noscript>
+
+
+  <!-- Google Analytics Tracking Code -->
+  <script>
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+          m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-48374724-2', 'auto');
+    ga('send', 'pageview');    
+    ga('require', 'displayfeatures');
+    {% if user.is_authenticated %}
+      ga('set', '&uid', '{{request.user.id}}'); // Set the user ID using signed-in user_id.
+    {% endif %}
+
+  </script>
+</head>
+<body class="{% if not user.is_authenticated %}unauth {% endif %}{% block body_class %}{% endblock %}">
+{% if user.is_authenticated %}
+  {% with form=newpin_shortcut %}{% include "_new_pin_popup.html" %}{% endwith %}
+  {% with form=contact_shortcut %}{% include "contact/_contact_form_popup.html" %}{% endwith %}
+{% else %}
+  {% with form=signup_shortcut %}{% include "_signup_popup.html" %}{% endwith %}
+  {% with form=login_shortcut %}{% include "_login_popup.html" %}{% endwith %}
+  {% with form=resend_shortcut %}{% include "_resend_popup.html" %}{% endwith %}
+  {% with form=reset_shortcut %}{% include "signup/_password_reset_popup.html" %}{% endwith %}
+{% endif %}
+
+{% url 'home' as home_url %}
+{% if request.get_full_path = home_url %}
+<div class="navbar navbar-fixed-top navbar-inverse clear-nav" role="navigation" id="slide-nav">
+{% else %}
+<div class="navbar navbar-fixed-top navbar-inverse" role="navigation" id="slide-nav">
+{% endif %}
+  <div class="container">
+    <div class="navbar-header">
+      <ul class="nav-auth nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+          <li ><a href="#newPinModal" data-toggle="modal" Title="Add a New Location" class="new-pin-link hidden-xs">+</a></li>
+          <li class="hidden-xs shidden-sm dropdown">
+            <a href="#" class="dropdown-toggle user-menu" data-toggle="dropdown">
+              <img class="img-circle" src="{% if user.profile.userpic %}{{ user.profile.userpic_small_url }}{% else %}{{ STATIC_URL }}img/userpic.png{% endif %}" width="30" height="30" alt=""/>
+              <span class="hidden-sm hidden-xs hidden-md">{{ user.first_name }}</span>
+              
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu pull-right">
+              <li><a href="/friends/?facebook">{% trans "Friends" %}</a></li>
+              <li><a href="{% url "settings" %}">{% trans "Settings" %}</a></li>
+              <li><a href="#contactFormModal" data-toggle="modal" class="contact-form">{% trans "Send Feedback" %}</a>
+              </li>
+              <li><a href="{% url "logout" %}">{% trans "Sign Out" %}</a></li>
+            </ul>
+          </li>
+
+        {% else %}
+          <li class="hidden-xs"><a class="signin-nav" href="{% url "signup" %}" data-modal="#signupModal">{% trans "Sign-Up" %}</a></li>
+          <li class="hidden-xs"><a class="signin-nav" href="{% url "login" %}" data-modal="#loginModal">{% trans "Sign-In" %}</a></li>
+
+        {% endif %}
+      </ul>
+
+      <button type="button" class="navbar-toggle clearfix" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand hidden-xs" href="/"><img src="{{ STATIC_URL }}/img/logo_website.png" alt=""/></a>
+      <a class="navbar-brand visible-xs" href="/"><img src="{{ STATIC_URL }}/img/mobile_logo.png" alt=""/></a>
+
+      {% block navbar-header %}{% endblock %}
+    </div>
+    <div id="slidemenu">
+      <ul class="nav navbar-nav">
+        {% if user.is_authenticated %}
+          {% block nav_profile %}
+            <li><a href="{% url "profile" %}"><span class="glyphicon glyphicon-user"></span> <span class="lb">{% trans "MY LIST" %}</span></a></li>
+          {% endblock %}
+          {% block nav_newsfeed %}
+            <li><a href="{% url "newsfeed" %}"><span class="glyphicon glyphicon-th-list"></span> <span class="lb">{% trans "FEED" %}</span></a></li>
+          {% endblock %}
+          {% block nav_local %}
+            <li><a href="{% url "local" %}"><span class="glyphicon glyphicon-map-marker"></span> <span class="lb">{% trans "LOCAL" %}</span></a></li>
+          {% endblock %}
+          {% block nav_explore %}
+            <li><a href="{% url "map" %}"><span class="glyphicon glyphicon-globe"></span> <span class="lb">{% trans "EXPLORE" %}</span></a></li>
+          {% endblock %}
+          <li  class="visible-xs"><a href="{% url "search" %}"><span class="glyphicon glyphicon-search"></span> <span class="lb">{% trans "SEARCH" %}</span></a></li>
+
+
+          <ul class="nav navbar-nav nested-nav-list">
+            </a>
+            <li class="visible-xs"><a href="#newPinModal" data-toggle="modal" class="new-pin-link"><span class="glyphicon glyphicon-plus"></span> Add a New Location</a></li>
+            <li class="visible-xs"><a href="/friends/?facebook"><span class="fa fa-users"></span> {% trans "Friends" %}</a></li>
+            <li class="visible-xs"><a href="{% url "settings" %}"><span class="glyphicon glyphicon-cog"></span> {% trans "Settings" %}</a></li>
+            <li class="visible-xs"><a href="#contactFormModal" data-toggle="modal" class="contact-form"><span class="glyphicon glyphicon-send"></span> {% trans "Send Feedback" %}</a></li>
+            <li class="visible-xs"><a href="{% url "logout" %}"><span class="glyphicon glyphicon-log-out"></span> {% trans "Sign Out" %}</a></li>
+          </ul>
+
+        {% else %}
+          <li><a href="{% url "local" %}"><span class="glyphicon glyphicon-map-marker"></span> <span class="lb">{% trans "LOCAL" %}</span></a></li>
+          <li><a href="{% url "map" %}"><span class="glyphicon glyphicon-globe"></span> <span class="lb">{% trans "EXPLORE" %}</span></a></li>
+          <li class="visible-xs"><a href="{% url 'signup' %}">{% trans "Sign-Up" %}</a></li>
+          <li class="visible-xs"><a href="{% url 'login' %}">{% trans "Sign-In" %}</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+<div id="page-content">
+  <div id="wrap">
+    {% block container %}
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+    {% endblock %}
+  </div>
+</div>
+<div id="fb-root"></div>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+{% compress js %}
+  <script src="{{ STATIC_URL }}js/vendor/json2.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/underscore.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/jquery.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/jquery.cookie.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/jquery-ui-1.9.2.custom.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/jquery.wookmark.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/jquery.form.min.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/jquery.geocomplete.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/moment.min.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/backbone.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/affix.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/alert.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/button.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/carousel.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/collapse.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/dropdown.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/modal.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/tooltip.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/popover.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/scrollspy.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/tab.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap/transition.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootbox.min.js"></script>
+  <script src="{{ STATIC_URL }}js/vendor/bootstrap-tagsinput.js"></script>
+  <script src="{{ STATIC_URL }}js/yoloify/yoloify.js"></script>
+  <!-- HTML5UP BLOCK -->
+  {% block page_js %}
+  {% endblock %}
+{% endcompress %}
+{% block js %}{% endblock %}
+
+<!-- sidenav canvas script from : http://jsbin.com/bavasuwava/1/edit-->
+<script>
+  $(document).ready(function() {
+
+    //stick in the fixed 100% height behind the navbar but don't wrap it
+    $('#slide-nav.navbar-inverse').after($('<div class="inverse" id="navbar-height-col"></div>'));
+
+    $('#slide-nav.navbar-default').after($('<div id="navbar-height-col"></div>'));
+
+    // Enter your ids or classes
+    var toggler = '.navbar-toggle';
+    var pagewrapper = '#page-content';
+    var navigationwrapper = '.navbar-header';
+    var menuwidth = '100%'; // the menu inside the slide menu itself
+    var slidewidth = '80%';
+    var menuneg = '-100%';
+    var slideneg = '-80%';
+
+
+    $("#slide-nav").on("click", toggler, function(e) {
+
+      var selected = $(this).hasClass('slide-active');
+
+      $('#slidemenu').stop().animate({
+        left: selected ? menuneg : '0px'
+      });
+
+      $('#navbar-height-col').stop().animate({
+        left: selected ? slideneg : '0px'
+      });
+
+      $(pagewrapper).stop().animate({
+        left: selected ? '0px' : slidewidth
+      });
+
+      $(navigationwrapper).stop().animate({
+        left: selected ? '0px' : slidewidth
+      });
+
+
+      $(this).toggleClass('slide-active', !selected);
+      $('#slidemenu').toggleClass('slide-active');
+
+
+      $('#page-content, .navbar, body, .navbar-header').toggleClass('slide-active');
+
+
+    });
+
+
+    var selected = '#slidemenu, #page-content, body, .navbar, .navbar-header';
+
+
+    $(window).on("resize", function() {
+
+      if ($(window).width() > 767 && $('.navbar-toggle').is(':hidden')) {
+        $(selected).removeClass('slide-active');
+      }
+
+
+    });
+
+  });
+</script>
+
+<script type="text/javascript">
+  $(function () {
+    var newPinModal = new NewPinModal();
+
+    // Password Reset AjaxForm initialization
+    {
+      var $modal = $('#passwordResetModal');
+      var $alert = $('.alert-form.alert-success');
+      var reset_form = new AjaxForm({
+        el: $('form', $modal),
+        onSuccess: function (data) {
+          $alert.html(data).removeClass('hide');
+        },
+        onErrors: function () {
+          $('.modal-content', $modal).effect('shake');
+        }
+      });
+    }
+
+    // Login AjaxForm initialization
+    {
+      var previousURL = window.location.href;
+      var $modal = $('#loginModal');
+      var $alert = $('.alert-form.alert-success');
+      var login_form = new AjaxForm({
+        el: $('form', $modal),
+        onSuccess: function (data) {
+          window.location = previousURL;
+        },
+        onErrors: function () {
+          $('.modal-content', $modal).effect('shake');
+        }
+      });
+    }
+
+    // Sign up AjaxForm initialization
+    {
+      var previousURL = window.location.href;
+      var $modal = $('#signupModal');
+      var $alert = $('.alert-form.alert-success');
+      var signup_form = new AjaxForm({
+        el: $('form', $modal),
+        onSuccess: function (data) {
+          window.location = previousURL + "?ref=signup";
+        },
+        onErrors: function () {
+          $('.modal-content', $modal).effect('shake');
+        }
+      });
+    }
+
+    {% block js_init %}{% endblock %}
+
+    window.fbAsyncInit = function () {
+      FB.init({appId: '680458435349320', version : 'v2.0', xfbml: true, cookie: true});
+      {% block fb_init %}{% endblock %}
+    };
+    (function (d) {
+      var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+      if (d.getElementById(id)) {
+        return;
+      }
+      js = d.createElement('script');
+      js.id = id;
+      js.async = true;
+      js.src = "//connect.facebook.net/en_US/sdk.js";
+      ref.parentNode.insertBefore(js, ref);
+    }(document));
+  });
+</script>
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+    $('.upload-link').click(function (e) {
+      e.preventDefault();
+      ga('send','content_generation','upload_photo',window.location.href);  //Google Analytics Event Tracking
+      if ($('body').hasClass('unauth')) {
+        $("[data-modal=#loginModal]").click();
+      } else {
+        $('#fileUpload').trigger('click');
+      }
+      return false;
+    });
+  });
+</script>
+</body>
+  
+
+</html>

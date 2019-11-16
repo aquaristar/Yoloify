@@ -1,0 +1,173 @@
+{% load i18n %}
+
+<script type="text/template" id="newPinModal-error-template">
+  <div class="alert alert-<%= type %>">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <%= message %>
+  </div>
+</script>
+<div id="newPinModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="newPinModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-fullscreen">
+    <div class="modal-content">
+      <form action="{% url "create_pin" %}" data-image-upload-api="{% url "api-upload" %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input type="hidden" id="file-max-size" value="{{ UPLOAD_FILE_MAX_SIZE }}" />
+        <input type="hidden" id="file-too-big-error-msg" value="{% trans "The file size is too big. The size should be less than " %}{{ UPLOAD_FILE_MAX_SIZE | filesizeformat }}." />
+        <input type="hidden" id="unknown-error-msg" value="{% trans "Unknown server error. Please, contact site administrators and pass them this information:" %}" />
+        <input type="hidden" id="format-unsupported-error-msg" value="{% trans "The given file format is currently not supported. Please, supply a file of one of the following formats: " %}{{ SUPPORTED_IMAGE_FORMATS | join:", " | upper }}." />
+        <input type="hidden" id="supported-formats-list" value="{{ SUPPORTED_IMAGE_FORMATS | join:"," }}" />
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 id="newPinModalTitle" class="modal-title">{% trans "Add an Activity or Location to YOLOify!" %}</h4>
+        </div>
+        <div class="modal-body tab-content">
+          <a href="#newPinModal-tab-title" class="hide"></a>
+          <a href="#newPinModal-tab-detail" class="hide"></a>
+          <a href="#newPinModal-tab-image" class="hide"></a>
+          <a href="#newPinModal-tab-map" class="hide"></a>
+          <div id="newPinModal-error-holder" class="hide"></div>
+
+          <div id="newPinModal-tab-title" class="tab-pane active">
+            <div class="form-group field-title">
+              <div class="alert-title-length alert alert-warning hide">Maximum title length is 32.</div>
+              <label for="{{ form.title.id_for_label }}" class="sr-only">{{ form.title.label }}</label>
+              <input name="{{ form.title.html_name }}" type="text" id="{{ form.title.id_for_label }}" placeholder="{{ form.title.label }}" class="form-control" maxlength="32" />
+            </div>
+            <div class="form-group field-description">
+              <label for="{{ form.description.id_for_label }}" class="sr-only">{{ form.description.label }}</label>
+              <input name="{{ form.description.html_name }}" type="text" id="{{ form.description.id_for_label }}" placeholder="Brief Description/ Tag Line" class="form-control" />
+            </div>
+            <div class="form-group field-url">
+              <div class="alert-title-length alert alert-warning hide">Maximum URL length is 200.</div>
+              <label for="{{ form.site_url.id_for_label }}" class="sr-only">{{ form.site_url.label }}</label>
+              <input name="{{ form.site_url.html_name }}" type="text" id="{{ form.site_url.id_for_label }}" placeholder="{{ form.site_url.label }}" class="form-control"/>
+            </div>
+            <div class="form-group field-tags">
+              <label for="{{ form.tags.id_for_label }}" class="sr-only">{{ form.tags.label }}</label>
+              <input name="{{ form.tags.html_name }}" type="text" id="{{ form.tags.id_for_label }}" placeholder="{{ form.tags.label }}" class="form-control" maxlength="200" />
+              <small class="help-block">Use comma to separate tags.</small>
+            </div>
+            <div class="form-group field-category">
+              {{ form.category }}
+            </div>
+            <div class="form-horizontal phoneNumber">
+              <div class="form-group">
+                <label for="phoneNumberParts" class="col-xs-3 control-label">{{ form.phone_number.label }}: </label>
+                <div class="col-sm-8">
+                  <dl id="phoneNumberParts">
+                    <dd><span class="form-control-static">(</span>
+                      <input type="text" class="form-control grouped-field" id="area-code" placeholder="###" size="3" maxlength="3">
+                      <span class="form-control-static">) </span></dd>
+                    <dd><input type="text" class="form-control grouped-field" id="exchange-code" placeholder="###" size="3" maxlength="3">
+                      <span class="form-control-static">-</span></dd>
+                    <dd><input type="text" class="form-control grouped-field" id="phone-number" placeholder="####" size="4" maxlength="4"></dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="form-group hide">
+                <input type="hidden" class="phone-number" name="{{ form.phone_number.html_name }}" id="{{ form.phone_number.id_for_label }}" />
+              </div>
+            </div>
+
+            <div class="form-horizontal hike-details">
+              <div class="form-group field-trail-length">
+                <label class="col-xs-3 control-label">Trail Length: </label>
+                <div class="col-xs-4">
+                  <input placeholder="Enter Length" class="trail-length form-control" />
+                </div>
+                <div class="col-xs-4">
+                  <select class="trail-length form-control">
+                    <option value="Miles">Miles</option>
+                    <option value="Kilometers">Kilometers</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group field-elevation-gain">
+                <label class="col-xs-3 control-label">Elevation Gain: </label>
+                <div class="col-xs-4">
+                  <input placeholder="Enter Gain" class="elevation-gain form-control" />
+                </div>
+                <div class="col-xs-4">
+                  <select class="elevation-gain form-control">
+                    <option value="Feet">Feet</option>
+                    <option value="Meters">Meters</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group field-highest-point">
+                <label class="col-xs-3 control-label">Highest Point: </label>
+                <div class="col-xs-4">
+                  <input placeholder="Enter Height" class="highest-point form-control" />
+                </div>
+                <div class="col-xs-4">
+                  <select class="highest-point form-control col-xs-4">
+                    <option value="Feet">Feet</option>
+                    <option value="Meters">Meters</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group hike-detail-form-group hide">
+              <label for="{{ form.hike_detail.id_for_label }}" class="sr-only">{{ form.hike_detail.label }}</label>
+              <input type="hidden" class="hike-detail" name="{{ form.hike_detail.html_name }}" id="{{ form.hike_detail.id_for_label }}" />
+            </div>
+
+            <a href="#newPinModal-submit-title" class="btn btn-primary btn-block submit">{% trans "Next" %}</a>
+          </div> {# #newPinModal-step2 #}
+
+          <div id="newPinModal-tab-image" class="tab-pane">
+            <h4>Upload from Device</h4>
+            <div class="form-group">
+              <div class="preview loading">
+                <img class="loader"  src="{{ STATIC_URL }}img/ajax-loader.gif" width="32" height="32" alt="" />
+                <img class="image" />
+                <br /><br />
+              </div>
+              <label for="{{ form.image.id_for_label }}" class="sr-only">{{ form.image.label }}</label>
+              <input name="{{ form.image.html_name }}" type="file" id="{{ form.image.id_for_label }}">
+            </div>
+            <h4>or<br /><br />Upload from URL</h4>
+            <div class="form-group">
+              <label for="{{ form.image_url.id_for_label }}" class="sr-only">{{ form.image_url.label }}</label>
+              <input name="image_url" type="text" class="form-control" placeholder="{{ form.image_url.label }}" autocomplete="off" />
+              <input name="{{ form.temp_image.html_name }}" type="hidden" id="temp_image" />
+            </div>
+            <br />
+            <h4>Add Photo Credit</h4>
+            <div class="form-group">
+              <label for="{{ form.image_author.id_for_label }}" class="sr-only">{{ form.image_author.label }}</label>
+              <input name="{{ form.image_author.name }}" type="text" class="form-control" placeholder="{{ form.image_author.label }}" />
+            </div>
+            <div class="form-group">
+              <label for="{{ form.image_source.id_for_label }}" class="sr-only">{{ form.image_source.label }}</label>
+              <input name="{{ form.image_source.name }}" type="url" class="form-control" placeholder="{{ form.image_source.label }}" />
+            </div>
+            <a href="#newPinModal-submit-image" class="btn btn-primary btn-block submit">{% trans "Submit" %}</a>
+            <div class="progress progress-striped active hide"><div class="progress-bar"  role="progressbar" style="width: 100%"></div></div>
+          </div> {# #newPinModal-step3 #}
+
+          <div id="newPinModal-tab-map" class="tab-pane">
+            <div class="form-group">
+              <label for="{{ form.address.id_for_label }}" class="sr-only input-address">{{ form.address.label }}</label>
+              <div class="input-group">
+                <div class="input-group-addon">
+                  <a class="geolocation" href="#"><span class="glyphicon glyphicon-record"></span></a>
+                </div>
+                <input name="{{ form.address.html_name }}" type="text" id="{{ form.address.id_for_label }}" placeholder="{{ form.address.label }}" class="form-control input-address" maxlength="200" />
+              </div>
+              <input type="hidden" class="hidden-neighborhood" name="{{ form.neighborhood.html_name }}" id="{{ form.neighborhood.id_for_label }}" value="" />
+              <input type="hidden" class="hidden-bounds" name="{{ form.bounds.html_name }}" id="{{ form.bounds.id_for_label }}" value="" />
+              <input type="hidden" class="hidden-place" name="{{ form.place.html_name }}" id="{{ form.place.id_for_label }}" value="" />
+            </div>
+            <div class="form-group">
+              <div id="map-canvas" class="map-canvas"></div>
+            </div>
+            <a href="#newPinModal-submit-location" class="btn btn-primary btn-block submit">{% trans "Next" %}</a>
+          </div> {# #newPinModal-location-location #}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

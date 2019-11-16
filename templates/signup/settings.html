@@ -1,0 +1,146 @@
+{% extends "singleform_base.html" %}
+{% load crispy_forms_tags i18n %}
+{# TODO add .control-label class for all forms #}
+
+{% block body_class %}settings{% endblock %}
+
+{% block form %}
+  {% include "signup/_password_change_popup.html" with form=password_change_form %}
+
+  <div class="page-header">
+    <h2>{% trans "Settings" %}</h2>
+    <p>
+      <a href="{% url "change_password" %}" data-modal="#passwordChangeModal">
+        {% if has_password %}
+          {% trans "Change your password" %}
+        {% else %}
+          {% trans "Set password for e-mail login" %}
+        {% endif %}
+      </a>
+    </p>
+    <div class="pass-change-alert  alert alert-success hide">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <span class="message"></span>
+    </div>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include "forms/_input.html" with field=form.username errors=form.username.errors type="text" %}
+    {% include "forms/_input.html" with field=form.first_name errors=form.first_name.errors type="text" %}
+    {% include "forms/_input.html" with field=form.last_name errors=form.last_name.errors type="text" %}
+
+    {# E-Mail field needs the verification information displayed nearby, so we can't use the standard template for input. #}
+    <div class="form-group {% if form.email.errors %}has-error{% endif %}">
+      <label for="{{ form.email.id_for_label }}" class="control-label">{{ form.email.label }}</label>
+      <input name="{{ form.email.html_name }}" value="{{ form.email.value }}" type="email" id="{{ form.email.id_for_label }}" class="form-control" />
+      {% if form.email.errors %}
+      <p class="help-block">{{ form.email.errors|striptags }}<p>
+      {% endif %}
+      
+      {% if user.get_profile.is_email_confirmed %}
+        <span class="email-verified"><span class="glyphicon glyphicon-certificate"> {% trans "Confirmed" %}</span>
+      {% else %}
+        <span class="email-unverified">{% trans "Unconfirmed" %}</span>
+        <a href="{% url "confirmation_resend" %}">{% trans "Resend confirmation" %}</a>
+      {% endif %}
+    </div>
+
+    {# Userpic field needs special formatting, so we can't use standard templates. #}
+    <div class="form-group userpic">
+      <label for="{{ form.userpic.id_for_label }}" class="control-label">
+        {{ form.userpic.label }}
+        <button type="button" class="btn btn-link">{% trans "Upload new photo" %}</button>
+      </label>
+      <div>
+        <div class="preview">
+          <div class="cropbox">
+          {% if form.userpic.value %}
+            <img class="image" src="{{ form.instance.profile.userpic_url }}" width="80" height="80" alt="" />
+          {% else %}
+            <img class="image" src="{{ STATIC_URL }}img/userpic.png" width="80" height="80" alt="" />
+          {% endif %}
+            <img class="loader" src="{{ STATIC_URL }}img/ajax-loader.gif" width="32" height="32" alt="" />
+          </div>
+        </div>
+        <input name="{{ form.userpic.html_name }}" id="{{ form.userpic.id_for_label }}" type="file" class="hidden" />
+      </div>
+    </div>
+
+    {% include "forms/_textarea.html" with field=form.about errors=form.about.errors %}
+    {% include "forms/_input.html" with field=form.location errors=form.location.errors type="text" %}
+
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Save" %}</button>
+
+  </form>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ super }}
+  (function initUsernameHelper() {
+    var $username = $('form [name=username]');
+    var $helpText = $('form [name=username] ~ .help-block');
+    $username.on('keydown keyup change', function() {
+      var username = $username.val();
+      $helpText.toggle(username != '');
+      $helpText.find('strong').html(username);
+    }).change();
+  })();
+
+  var input = $('form [name={{ form.userpic.html_name }}]');
+  $('form .userpic button').click(function() { input.click(); });
+
+  var modal = $('#passwordChangeModal');
+  var alert = $('.pass-change-alert');
+  var form = new AjaxForm({
+    el: $('form', modal),
+    onSuccess: function(data) {
+      window.location.reload(); //@todo show success message
+      $('form input[type=password]', modal).val('');
+      modal.modal('hide');
+      var copy = alert.clone();
+      $('.message', copy).html(data);
+      copy.removeClass('hide').insertAfter(alert);
+    },
+    onErrors: function() {
+      $('.modal-content', modal).effect('shake');
+    }
+  });
+
+  var preview = $('form .userpic .preview');
+  var cropbox = $('form .userpic .preview .cropbox');
+  var image = $('form .userpic img.image');
+  var input = $('form .userpic input');
+  input.change(function() {
+    cropbox.addClass('loading');
+    var input = this;
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        image.attr('src', e.target.result);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  });
+  image.load(function() {
+    var boxWidth = cropbox.width();
+    var boxHeight = cropbox.height();
+    var width  = image[0].naturalWidth;
+    var height = image[0].naturalHeight;
+    if (width/height > boxWidth/boxHeight) {
+      width = boxHeight / height * width;
+      height = boxHeight;
+    } else {
+      height = boxWidth / width * height;
+      width = boxWidth;
+    }
+    image.width(width);
+    image.height(height);
+    image.css({
+      top: (boxHeight - height) / 2,
+      left: (boxWidth - width) / 2
+    });
+    cropbox.removeClass('loading');
+  });
+{% endblock %}
+</script>

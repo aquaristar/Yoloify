@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load thumbnail i18n %}
+{% load cache %}
+
+{% block og_basic %}
+    <meta property="og:title" content="{{ profile.user.get_full_name }} on YOLOify"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}{% url "profile" profile.pk %}"/>
+    <meta property="og:image" content="http://{{ SITE_DOMAIN }}{% if profile.userpic %}{{ profile.userpic_large_url }}{% else %}{{ STATIC_URL }}img/userpic.png{% endif %}"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}{% url "profile" profile.pk %}">
+    <meta name="twitter:title" content="{{ profile.user.get_full_name }} on YOLOify"/>
+    <meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}{% if profile.userpic %}{{ profile.userpic_large_url }}{% else %}{{ STATIC_URL }}img/userpic.png{% endif %}"/>
+    <title>{% block title %}{{ profile.user.get_full_name }} | YOLOify {% endblock %}</title>
+    <html itemscope itemtype="http://schema.org/LocalBusiness">
+    <meta itemprop="name" content="Discover places, hikes, events, and activities today!">
+    <meta itemprop="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta itemprop="image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg">
+    
+{% endblock %}
+
+{% block body_class %}profile{% endblock %}
+
+{% block nav_profile %}<li{% if profile.user == user %} class="active"{% endif %}><a href="{% url "profile" %}"><span class="glyphicon glyphicon-user"></span> MY LIST</a></li>{% endblock %}
+
+{% block container %}
+  <div class="media">
+    <div class="container">
+      <div class="well">
+        <table class="followbox">
+          <tr>
+          {% if profile.user != user %}
+            <td class="follow-area">
+            {% if is_following %}
+              <a href="javascript:;" data-profile-id="{{profile.id}}" class="unfollow btn btn-primary btn-block" role="button">{% trans "Following" %}</a>
+            {% else %}
+              <a href="javascript:;" data-profile-id="{{profile.id}}" class="follow btn btn-primary btn-block">{% trans "Follow Me" %}</a>
+            {% endif %}
+            <img class="loader" src="{{ STATIC_URL }}img/ajax-loader.gif" width="32" height="32" alt="" />
+            </td>
+          {% endif %}
+          {% if user.is_authenticated %}
+          {% cache 500 profile-followers profile.user.username %}
+            <td>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#followersModal">Followers{% if followers %} {{ followers|length }}{% endif %}</button>
+              {% include "pinboard/_fellas_popup.html" with fellas=followers id="followersModal" title="Followers" %}
+            </td>
+            <td>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#followingModal">Following{% if following %} {{ following|length }}{% endif %}</button>
+              {% include "pinboard/_fellas_popup.html" with fellas=following id="followingModal" title="Following" %}
+            </td>
+          {% endcache %}
+          {% else %}
+            {% if followers %}
+              <td><span class="btn btn-default" >Followers{% if followers %} {{ followers|length }}{% endif %}</span></td>
+            {% endif %}
+            {% if following %}
+              <td><span class="btn btn-default">Following{% if following %} {{ following|length }}{% endif %}</span></td>
+            {% endif %}
+          {% endif %}
+          </tr>
+        </table>
+
+        <div class="media-body">
+        {% cache 500 profile-info profile.user.username %}
+          {% if profile.userpic %}
+            <img class="media-object pull-left img-circle" src="{{ profile.userpic_url }}" width="80" height="80" alt="" />
+          {% else %}
+            <img class="media-object pull-left img-circle" src="{{ STATIC_URL }}img/userpic.png" width="80" height="80" alt="" />
+          {% endif %}
+          <div class="heading">
+            <h4 class="username media-heading">{{ profile.user.get_full_name }}</h4>
+            {% if profile.location %}
+            <p class="location">
+              {{ profile.location }}
+            </p>
+            {% endif %}
+          </div>
+        {% endcache %}
+        </div>
+      {% if profile.about %}
+        <p class="about">{{ profile.about }}</p>
+      {% endif %}
+        <p class="fb-share-link hidden-sm hidden-xs" style="display:none">
+          <a target="_blank" href="http://{{ SITE_DOMAIN }}/profile/{{ profile.id }}/"><span class="fa fa-facebook"></span> <u>Share on Facebook</u></a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {% cache 500 profile-popups %}
+    {% include "pinboard/_pin_popup.html" %}
+  {% endcache %}
+
+  <nav>
+    <ul class="nav nav-tabs container hidden-xs">
+      <li{% if section == 'goals' %} class="active"{% endif %}><a href="./">{% blocktrans %}<span class="glyphicon glyphicon-bookmark"></span> Bookmarks{% endblocktrans %}</a></li>
+      <li{% if section == 'completed' %} class="active"{% endif %}><a href="./?completed">{% blocktrans %}<span class="completed  glyphicon glyphicon-ok"></span> Places I've Been{% endblocktrans %}</a></li>
+    </ul>
+	<ul class="nav nav-tabs container visible-xs">
+      <li{% if section == 'goals' %} class="active"{% endif %}><a href="./">{% blocktrans %}Bookmarks{% endblocktrans %}</a></li>
+      <li{% if section == 'completed' %} class="active"{% endif %}><a href="./?completed">{% blocktrans %}Places I've Been{% endblocktrans %}</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <div class="tab-content">
+      <div class="tab-pane active  pinboard-container">
+      {% if more %}
+        <ul class="pinboard list-unstyled">
+        {% with pins=pins pinboard_id=pinboard_id more=more %}{% include "pinboard/_pinboard_part.html" %}{% endwith %}
+        </ul>
+      {% else %}
+        {% if section == 'goals' %}
+          <div class="alert alert-info">
+            {% if profile.user == user %}
+              There is nothing on your list! <a href="#newPinModal" data-toggle="modal">Create new one</a> or checkout <a href="{% url 'trending' %}">the most popular things on YOLOify</a>.
+            {% else %}
+              This user does not have anything on their list, check out <a href="/trending/">the most popular things on YOLOify</a>.
+            {% endif %}
+          </div>
+        {% endif %}
+        {% if section == 'completed' %}
+          <div class="alert alert-info">
+            {% if profile.user == user %}
+              You have not marked off any place as "Been Here". You can do this in the <a href="./">To-Do tab</a>.
+            {% else %}
+              This user has apparently not been anywhere, check out <a href="/trending/?completed">the most popular places people have been on YOLOify</a>.
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endif %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block js %}{{ super }}
+  <script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+
+{% if user.is_authenticated %}
+  var pin = new Pin();
+  var pinModal = new PinModal({model:pin});
+  pinModal.on('destroy', function() {
+    window.location.href = '/profile/';
+  });
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+
+  lazyStart(function () {
+      // bind pinboard to modals
+      $('.pinboard .pin a.zoom').click(function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        pin.set({id: id});
+        pinModal.open();
+      });
+  });
+
+  $('.followbox').on('mouseenter', '.unfollow', function() {
+    $(this).addClass('btn-danger');
+  }).on('mouseleave','.unfollow',  function(){
+    $(this).removeClass('btn-danger');
+  });
+
+  var $followArea = $('.follow-area');
+
+  $('.followbox').on('click', '.follow', function (e) {
+    if ( !$followArea.hasClass('loading') ) {
+      var self = $(this),
+          friendId = $(this).attr('data-profile-id'),
+          url = '/follow/' + friendId + '/';
+      $(this).removeClass('follow');
+      $followArea.addClass('loading');
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: "json"
+      }).done(function( responseText ) {
+        self.addClass('unfollow').html('Following');
+        ga('send','content_action','follow',window.location.href);  //Google Analytics Event Tracking
+      }).fail(function(xhr, status, error){
+        self.addClass('follow');
+      }).complete(function( jqXHR, status ) {
+        $followArea.removeClass('loading');
+      });
+    }
+  });
+
+  $('.followbox').on('click', '.unfollow', function (e) {
+    if ( !$followArea.hasClass('loading') ) {
+      var self = $(this),
+          friendId = $(this).attr('data-profile-id'),
+          url = '/unfollow/' + friendId + '/';
+      $(this).removeClass('unfollow');
+      $followArea.addClass('loading');
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: "json"
+      }).done(function( responseText ) {
+        self.addClass('follow').html('Follow Me');
+        ga('send','content_action','unfollow',window.location.href);  //Google Analytics Event Tracking
+      }).fail(function(xhr, status, error){
+        self.addClass('unfollow');
+      }).complete(function( jqXHR, status ) {
+        $followArea.removeClass('loading');
+        self.removeClass('btn-danger');
+      });
+    }
+  });
+
+  $('button.followers').popover({
+    container: 'body'
+  });
+{% else %}
+  var pin = new Pin();
+  var pinModal = new PinModal({model:pin});
+  pinModal.on('destroy', function() {
+    window.location.href = '/newsfeed/';
+  });
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+
+  lazyStart(function () {
+      // bind pinboard to modals
+      $('.pinboard .pin a.zoom').click(function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        pin.set({id: id});
+        pinModal.open();
+      });
+  });
+  $('.followbox .follow').on('click', function(event) { $('a[data-modal=#loginModal]').click(); });
+{% endif %}
+
+{% endblock %}
+</script>
+
+<script>
+{% block fb_init %}
+  $('.fb-share-link a').click(function(event) {
+    ga('send','share','share_profile',window.location.href);  //Google Analytics Event Tracking
+    event.preventDefault();
+    var link = $(this).attr('href');
+    FB.ui({
+      method: 'share',
+      href: link
+    }, function(response){});
+  });
+  $('.fb-share-link').show();
+{% endblock %}
+</script>

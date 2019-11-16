@@ -1,0 +1,8 @@
+# supervisor upstart job
+
+description "supervisor instance"
+start on runlevel [2345]
+stop on runlevel [-2345]
+
+
+exec supervisord -c /etc/supervisord.conf

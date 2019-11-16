@@ -1,0 +1,42 @@
+{% load thumbnail pinboard i18n %}
+{% for pin in pins %}
+  {% with goal=pin.goal %}
+    <li class="pin{% if pin.complete %} completed{% endif %}">
+      <div class="pin-hover-menu clearfix">
+        <img class="loader repost-loader" src="{{ STATIC_URL }}img/small-loader.png" width="32" height="32" alt="" />
+        <a href="javascript:void(0)" data-goal-id="{{ pin.goal.pk }}" data-pin-id="{{ pin.pk }}" class="repost {% if pin.goal_id in repins %}reposted{% endif %}" title="{% if pin.goal_id in repins %}Remove from bookmarks{% else %}Add To Bookmarks{% endif %}" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-bookmark"></span></a>
+        <img class="loader like-loader" src="{{ STATIC_URL }}img/small-loader.png" width="32" height="32" alt="" />
+      </div>
+      <a href="{% url "pin" pin.pk pin.slug_title %}" data-id="{{ pin.pk }}" data-goal-id="{{ pin.goal.pk }}" class="zoom">
+    {% if pin.completed %}
+      <span class="completed  glyphicon glyphicon-ok"></span>
+    {% endif %}
+    {% with goal.generate_thumbnail as thumb %}
+      <div class="pin-background" style="background-color: #{{ goal.dominant_color }};">
+        <h4>{{ goal.title }}</h4>
+        <img class="thumb lazy" data-src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
+      </div>
+    {% endwith %}
+    {% if goal.deal_button_link and goal.deal_active %}
+      <span class="pin_part_banner">Available Deal</span>
+    {% endif %}
+      <div class="pin-part-info">
+        <p class="title">{{ goal.title }}</p>
+        {% if goal.location.neighborhood %}
+        <p class="neighborhood"> 
+          <span class="glyphicon glyphicon-map-marker"></span> 
+          {{ goal.location.neighborhood }} {% if goal.pin_count > 5 %}   &middot;   {{ goal.pin_count }} Bookmarks  {% endif %}
+        </p> 
+        {% endif %}
+        </div>
+      </a>
+    </li>
+  {% endwith %}
+{% empty %}
+  {% if part_number == 0 %}
+    <p class="no-results">{% blocktrans %}Sorry, there are no results. Please adjust your search criteria above.{% endblocktrans %}</p>
+  {% endif %}
+{% endfor %}
+{% if more %}
+<div id="next-url" style="visibility: hidden; position: absolute;" data-next-url="{% url "pinboard_next_part" pinboard_name %}?{{ part_parameters|safe }}"></div>
+{% endif %}

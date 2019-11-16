@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load i18n pinboard %}
+{% block og_basic %}
+    <meta property="og:title" content="Newfeed | YOLOify"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}/newsfeed"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}/newsfeed">
+    <meta name="twitter:title" content=" Newsfeed | YOLOify"/>
+    <title>{% block title %}Newfeed | YOLOify{% endblock %}</title>
+{% endblock %}
+{% block body_class %}profile newsfeed{% endblock %}
+
+{% block nav_newsfeed %}<li class="active"><a href="{% url "newsfeed" %}"><span class="glyphicon glyphicon-th-list"></span> {% trans "FEED" %}</a></li>{% endblock %}
+
+{% block container %}
+  
+  {% include "pinboard/_pin_popup.html" %}
+  <div class="media">
+    <div class="container hidden-xs">
+      <div class="header-title">What's New!?</div>
+    </div>
+	  <div class="container visible-xs">
+      <div class="header-title">What's New!?</div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="pinboard-container">
+      {% if more %}
+      <ul class="pinboard list-unstyled">
+        {% with feed_pins=feed_pins more=more next_page=next_page %}
+          {% include "pinboard/_feed_part.html" %}
+        {% endwith %}
+      </ul>
+      {% else %}
+        <div class="alert alert-info">
+          There is currently no activity in your news feed. Check out the <a href="/friends/?facebook">friends</a> page to find more people to follow.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+
+  var pin = new Pin();
+  var pinModal = new PinModal({model: pin});
+  pinModal.on('destroy', function() {
+    window.location.href = '/newsfeed/';
+  });
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+  lazyStart(function () {
+    // bind pinboard to modals
+    $('.pinboard .pin a.zoom').click(function(e) {
+      e.preventDefault();
+      var id = $(this).data('id');
+      pin.set({id: id});
+      pinModal.open();
+    });
+  });
+
+{% endblock %}
+</script>

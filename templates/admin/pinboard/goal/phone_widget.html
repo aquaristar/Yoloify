@@ -1,0 +1,19 @@
+<div id="{{ name }}_phone">
+  <input type="hidden" name="{{ name }}" value="{{ value }}" />
+  <span class="form-control-static">(</span>
+  <input type="text" class="form-control grouped-field" id="area-code" placeholder="999" size="3" maxlength="3" value="{{ detail.0 }}">
+  <span class="form-control-static">) </span>
+  <input type="text" class="form-control grouped-field" id="exchange-code" placeholder="999" size="3" maxlength="3" value="{{ detail.1 }}">
+  <span class="form-control-static">-</span>
+  <input type="text" class="form-control grouped-field" id="number" placeholder="9999" size="4" maxlength="4" value="{{ detail.2 }}">
+</div>
+
+<script>
+  $(function() {
+    var $div = $('#{{ name }}_phone');
+    $(':input', $div).change(function() {
+      var phone = $('#area-code', $div).val() + $('#exchange-code', $div).val() + $('#number', $div).val();
+      $("[name={{name}}]").val(phone);
+    }).change();
+  });
+</script>

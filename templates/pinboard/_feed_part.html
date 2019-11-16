@@ -1,0 +1,44 @@
+{% for activity in feed_pins %}
+  {% if activity.actor %}
+    {% with pin=activity.pin %}
+      <li class="pin{% if pin.complete %} completed{% endif %}">
+        <div class="activity">
+          <a href="{% url "profile" activity.actor.pk %}">
+            {% if activity.actor.userpic %}
+              <img src="{{ activity.actor.userpic_small_url }}" width="32" height="32" alt="{{activity.actor.user.get_full_name}}" />
+            {% else %}
+              <img src="/static/img/userpic.png" alt="{{activity.actor.user.get_full_name}}" width="32" height="32">
+            {% endif %}
+          </a>
+          <span class="name">
+            <a href="{% url "profile" activity.actor.pk %}">{{activity.actor.user.get_full_name}}</a>
+          </span>
+          <span class="action">{{ activity.verb.past_tense|capfirst }}</span>
+        </div>
+        <div class="pin-hover-menu clearfix">
+          <img class="loader repost-loader" src="{{ STATIC_URL }}img/small-loader.png" width="32" height="32" alt="" />
+          <a href="javascript:void(0)" data-goal-id="{{ pin.goal.pk }}" data-pin-id="{{ pin.pk }}" class="repost {% if pin.goal_id in repins %}reposted{% endif %}" title="{% if pin.goal_id in repins %}Remove from bookmarks{% else %}Add To Bookmarks{% endif %}" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-bookmark"></span></a>
+          <img class="loader like-loader" src="{{ STATIC_URL }}img/small-loader.png" width="32" height="32" alt="" />
+
+        </div>
+        <a href="{% url "pin" pin.pk pin.slug_title %}" data-id="{{ pin.pk }}" data-goal-id="{{ pin.goal.pk }}" class="zoom">
+          {% with pin.goal.generate_thumbnail as thumb %}
+          <div class="pin-background" style="background-color: #{{ pin.goal.dominant_color }};">
+            <h4>{{ pin.goal.title }}</h4>
+            <img class="thumb lazy" data-src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
+          </div>
+        {% endwith %}
+        {% if pin.goal.deal_button_link and pin.goal.deal_active %}
+          <span class="pin_part_banner banner_newsfeed">Available Deal</span>
+        {% endif %}
+          <div class="pin-part-info">
+            <p class="title">{{ pin.goal.title }}</p>
+          </div>
+        </a>
+      </li>
+    {% endwith %}
+  {% endif %}
+{% endfor %}
+{% if more %}
+<div id="next-url" style="visibility: hidden; position: absolute;" data-next-url="{% url "newsfeed"%}?page={{next_page}}"></div>
+{% endif %}

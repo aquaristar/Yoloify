@@ -1,0 +1,17 @@
+<div class="form-group {% if errors %}has-error{% endif %}">
+  <label for="{{ field.id_for_label }}" class="control-label{% if hide_label %} sr-only{% endif %}">{{ field.label }}</label>
+  <input name="{{ field.html_name }}"{% if type != 'password' %} value="{{ field.value|default:"" }}"{% endif %} id="{{ field.id_for_label }}" placeholder="{{ field.label }}" type="{{ type|default:"text" }}" class="form-control" />
+{% if errors %}
+  <div class="has-error">
+  {% for error in errors %}
+    <span class="help-block">{{ error }}</span>
+  {% endfor %}
+  </div>
+{% endif %}
+{% if field.help_text %}
+  <span class="help-block">{{ field.help_text }}</span>
+{% endif %}
+{% if ajax %}
+  <p class="help-block error"></p>
+{% endif %}
+</div>

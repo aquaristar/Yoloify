@@ -1,0 +1,38 @@
+{% extends "singleform_base.html" %}
+{% load crispy_forms_tags i18n %}
+
+{% block form %}
+  <div class="page-header login">
+
+  <h4>
+    {% url "signup" as signup_url %}
+    <strong>
+      Not a member? 
+      <a href="{{ signup_url }}">Sign-up</a>
+     
+    </strong>
+  </h4>
+ </div>
+  <form method="post">
+  {% csrf_token %}
+  <div class="modal-body login">
+    <div class="alert alert-form alert-danger hide"></div>
+
+    <div class="col-md-12 fb">
+      <a class="btn btn-primary facebook-login" href="/login/facebook/">Login with Facebook</a>
+
+    <div class="row">
+      <h5>or sign in with email</h5>
+    </div>
+
+
+  {% include "forms/_form_errors.html" with form=form %}
+  {% with hide_label=True %}
+    {% include "forms/_input.html" with field=form.email errors=form.errors.email %}
+    {% include "forms/_input.html" with field=form.password errors=form.errors.password type='password' %}
+  {% endwith %}
+    <p class="help-block"><a href="{% url "reset_password" %}">{% trans "Forgot your password?" %}</a></p>
+    <button type="submit" class="btn btn-block btn-primary">{% trans "Sign In" %}</button>
+   </div>
+  </form>
+{% endblock %}

@@ -1,0 +1,64 @@
+; ==================================
+;  celery worker supervisor example
+; ==================================
+
+[program:celerydDefault]
+; Set full path to celery program if using virtualenv
+command={{project.virtualenv}}/bin/python {{project.root}}/manage.py celery worker -Q default-queue --loglevel=INFO
+
+directory={{ project.root }}
+user=celery
+process_name=%(program_name)s
+numprocs=1
+stdout_logfile={{celery_log_dir}}/celeryd.log
+stderr_logfile={{celery_log_dir}}/celeryd.log
+autostart=true
+autorestart=true
+startsecs=10
+environment=C_FORCE_ROOT="true"
+stopasgroup=true
+
+; Need to wait for currently executing tasks to finish at shutdown.
+; Increase this if you have very long running tasks.
+stopwaitsecs = 300
+
+; When resorting to send SIGKILL to the program to terminate it
+; send SIGKILL to its whole process group instead,
+; taking care of its children as well.
+killasgroup=true
+
+; if rabbitmq is supervised, set its priority higher
+; so it starts first
+priority=998
+
+
+
+[program:celerydCache]
+; Set full path to celery program if using virtualenv
+command={{project.virtualenv}}/bin/python {{project.root}}/manage.py celery worker -Q cache-queue --loglevel=INFO
+
+directory={{ project.root }}
+user=celery
+process_name=%(program_name)s
+numprocs=1
+stdout_logfile={{celery_log_dir}}/celeryd.log
+stderr_logfile={{celery_log_dir}}/celeryd.log
+autostart=true
+autorestart=true
+startsecs=10
+environment=C_FORCE_ROOT="true"
+stopasgroup=true
+
+; Need to wait for currently executing tasks to finish at shutdown.
+; Increase this if you have very long running tasks.
+stopwaitsecs = 300
+
+; When resorting to send SIGKILL to the program to terminate it
+; send SIGKILL to its whole process group instead,
+; taking care of its children as well.
+killasgroup=true
+
+; if rabbitmq is supervised, set its priority higher
+; so it starts first
+priority=998
+

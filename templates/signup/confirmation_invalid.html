@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+    {% url "confirmation_resend" as confirmation_resend_url %}
+    {% url "login" as login_url %}
+    <p>{% blocktrans %}The email confirmation link was invalid, possibly because it has already been used. Please try to <a href="{{ login_url }}">sign in</a> or <a href="{{ confirmation_resend_url }}">resend confirmation</a>.{% endblocktrans %}</p>
+{% endblock content %}

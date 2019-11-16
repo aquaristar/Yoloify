@@ -1,0 +1,25 @@
+<div class="form-group {% if errors %}has-error{% endif %}">
+  <label for="{{ field.id_for_label }}" class="control-label{% if hide_label %} sr-only{% endif %}">{{ field.label }}</label>
+
+  <select name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="select form-control">
+  {% if empty_option|default_if_none:0 != 0 %}
+    <option{% if not field.value %} selected="selected"{% endif %}>{{ empty_option }}</option>
+  {% endif %}
+  {% for option, label in options %}
+    <option value="{{ option }}"{% if field.value == option %} selected="selected"{% endif %}>{{ label }}</option>
+  {% endfor %}
+  </select>
+{% if errors %}
+  <div class="has-error">
+  {% for error in errors %}
+    <span class="help-block">{{ error }}</span>
+  {% endfor %}
+  </div>
+{% endif %}
+{% if field.help_text %}
+  <span class="help-block">{{ field.help_text }}</span>
+{% endif %}
+{% if ajax %}
+  <p class="help-block error"></p>
+{% endif %}
+</div>

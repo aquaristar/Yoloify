@@ -1,0 +1,24 @@
+---
+- name: start nginx
+  service: name=nginx state=started
+
+- name: start redis-server
+  service: name=redis-server state=started
+
+- name: start memcache
+  service: name=memcached state=started
+
+- name: restart uwsgi
+  service: name=uwsgi state=restarted
+  tags:
+    - deploy
+
+- name: restart celery worker
+  supervisorctl: name=celeryd state=restarted
+  tags:
+    - deploy
+
+- name: restart celery beat
+  supervisorctl: name=celeryb state=restarted
+  tags:
+    - deploy

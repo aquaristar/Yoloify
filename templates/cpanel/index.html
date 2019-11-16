@@ -1,0 +1,210 @@
+{% extends "cpanel/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-users fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{ usage.total_new_users }}</div>
+                        <div>Users</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-green">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-map-marker fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{ usage.total_location_pin }}</div>
+                        <div>Locations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-green">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-map-marker fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{ usage.total_location_repin }}</div>
+                        <div>Bookmarks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+    <div class="col-lg-3 col-md-6">
+        <div class="panel panel-red">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-comments fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">{{ usage.total_comments }}</div>
+                        <div>Reviews</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<!-- /.row -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-line-chart"></i> Users Activity
+                <div class="pull-right">
+                    <!-- <i class="fa fa-refresh fa-spin"></i>  -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            Date Filter
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a href="javascript:;" onclick="fetchLastWeekDailyUsage('user-line-chart')">Last week</a>
+                            </li>
+                            <li><a href="javascript:;" onclick="fetchLastMonthDailyUsage('user-line-chart')">Last 1 month</a>
+                            </li>
+                            <li><a href="javascript:;" onclick="fetchLast3MonthDailyUsage('user-line-chart')">Last 3 months</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:;" onclick="fetchAllTimeDailyUsage('user-line-chart')">All time</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="user-line-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-line-chart"></i> Location Items
+                <div class="pull-right">
+                    <!-- <i class="fa fa-refresh fa-spin"></i>  -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            Date Filter
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a href="javascript:;" onclick="fetchLastWeekDailyUsage('location-line-chart')">Last week</a>
+                            </li>
+                            <li><a href="javascript:;" onclick="fetchLastMonthDailyUsage('location-line-chart')">Last 1 month</a>
+                            </li>
+                            <li><a href="javascript:;" onclick="fetchLast3MonthDailyUsage('location-line-chart')">Last 3 months</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:;" onclick="fetchAllTimeDailyUsage('location-line-chart')">All time</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="location-line-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> Usage Stats
+                <div class="pull-right">
+                    <!-- <i class="fa fa-refresh fa-spin usage-stats-total"></i> -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            Date Filter
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a href="javascript:;" onclick="fetchTodayTotalUsage('usage-stats-total')">Today</a>
+                            </li>
+                            <li><a href="javascript:;" onclick="fetchLastWeekTotalUsage('usage-stats-total')">Last week</a>
+                            </li>
+                            <li><a href="javascript:;" onclick="fetchLastMonthTotalUsage('usage-stats-total')">Last 1 month</a>
+                            </li>
+                            <li><a href="javascript:;" onclick="fetchLast3MonthTotalUsage('usage-stats-total')">Last 3 months</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:;" onclick="fetchAllTimeTotalUsage('usage-stats-total')">All time</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="list-group" id="usage-stats-total">
+                    <a href="javascript:;" class="list-group-item">
+                        <i class="fa fa-map-marker fa-fw"></i> Total Location Pins
+                        <span class="pull-right text-muted small tlp-count">{{ usage.total_location_pin }}
+                        </span>
+                    </a>
+                    <a href="javascript:;" class="list-group-item">
+                        <i class="fa fa-thumb-tack fa-fw"></i> Total Bookmarks
+                        <span class="pull-right text-muted small tlrp-count">{{ usage.total_location_repin }}
+                        </span>
+                    </a>
+                    <a href="javascript:;" class="list-group-item">
+                        <i class="fa fa-check-square fa-fw"></i> Total Been Here
+                        <span class="pull-right text-muted small tlc-count">{{ usage.total_location_completed }}
+                    </a>
+                    <a href="javascript:;" class="list-group-item">
+                        <i class="fa fa-comments fa-fw"></i> Reviews
+                        <span class="pull-right text-muted small tc-count">{{ usage.total_comments }}
+                    </a>
+                    <a href="javascript:;" class="list-group-item">
+                        <i class="fa fa-users fa-fw"></i> New Users
+                        <span class="pull-right text-muted small tnu-count">{{ usage.total_new_users }}
+                        </span>
+                    </a>
+                    <a href="javascript:;" class="list-group-item">
+                        <i class="fa fa-users fa-fw"></i> Active Users
+                        <span class="pull-right text-muted small tau-count">{{ usage.total_active_users }}
+                        </span>
+                    </a>
+                </div>
+                <!-- /.list-group -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+</div>
+<!-- /.row -->
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">
+        fetchAllTimeDailyUsage('user-line-chart');
+        fetchAllTimeDailyUsage('location-line-chart');
+    </script>
+{% endblock %}

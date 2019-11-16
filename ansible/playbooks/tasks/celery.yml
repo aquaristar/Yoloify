@@ -1,0 +1,36 @@
+---
+- name: Supervisor | make sure the supervisor conf dir exists
+  file: path={{ supervisor_dir }} state=directory mode=0755 recurse=yes
+
+- name: Supervisor | update the global supervisor configuration
+  template: src={{supervisord_conf_file}} dest=/etc/supervisord.conf mode=0644
+
+- name: Supervisor | make sure the supervisor log dir exists
+  file: path={{ supervisor_log_dir }} state=directory mode=0755 recurse=yes
+
+- name: Celery | make sure the celery log dir exists
+  file: path={{ celery_log_dir }} state=directory mode=0755 recurse=yes
+
+- name: Copy celeryb, celeryd conf files to /etc/supervisor/conf.d
+  template: src={{item.src}} dest={{supervisor_dir}}/conf.d/{{item.dest_name}} mode=0766
+  with_items:
+    - {src: templates/celeryd.conf.j2, dest_name: celeryd.conf}
+    - {src: templates/celerybeat.conf.j2, dest_name: celeryb.conf}
+
+- name: Supervisor | checking if supervisord is running
+  shell: pgrep supervisor
+  ignore_errors: on
+  changed_when: off
+  register: supervisor_running
+
+- name: Supervisor | start supervisord gracefully
+  service: name=supervisord state=started
+  when: supervisor_running|failed
+
+- name: Supervisor | update supervisor to sync conf changes
+  shell: 'supervisorctl -c /etc/supervisord.conf update'
+  when: supervisor_running|success
+
+- name: Supervisor | restart supervisor to sync app changes
+  shell: 'supervisorctl -c /etc/supervisord.conf restart'
+  when: supervisor_running|success

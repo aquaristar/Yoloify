@@ -1,0 +1,7 @@
+{{ object.goal.title }}
+{{ object.goal.location.address }}
+{{ object.goal.description}}
+{{ object.goal.tags }}
+{{ object.goal.features }}
+{{ object.goal.tag_line }}
+{{ object.location.neighborhood }}

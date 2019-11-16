@@ -1,0 +1,65 @@
+{% load i18n %}
+<div class="comments-wrap">
+  <ul class="comments">
+    {% for comment in comments %}
+    <li class="comment">
+      <div class="comment-wrap">
+        <a class="flag-comment glyphicon glyphicon-flag" href="javascript:;" data-comment="{{ comment.id}}" data-toggle="modal" data-target="#flagCommentPopup">
+        </a>
+        <div class="comment-description">
+          <a class="user-thumb-wrap" href="{% url "profile" comment.user.profile.id %}">
+          {% if comment.user.profile.userpic %}
+            <img class="user-thumb img-circle" src="{{  comment.user.profile.userpic_url }}" alt="{{ comment.user.get_full_name }}" />
+          {% else %}
+            <img class="user-thumb img-circle" src="{{ STATIC_URL }}img/userpic.png" alt="{{ comment.user.get_full_name }}" />
+          {% endif %}
+          </a>
+          <div class="comment-content">
+            <div class="commenter">
+              <a class="commenter-name" href="{% url "profile" comment.user.profile.id %}">{{ comment.user.get_full_name }}</a>
+              <span class="comment-time">• {{ comment.submit_date|timesince }} ago </span>
+            </div>
+            <p class="comment-text">{{ comment.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+<div class="pin-comment-box">
+
+  <div class="comment-description">
+  {% if user.is_authenticated %}
+    <a class="user-thumb-wrap hidden-xs hidden-sm" href="{% url "profile" profile.id %}">
+      {% if profile.userpic %}
+        <img class="user-thumb img-circle" src="{{ profile.userpic_url }}" alt="{{ profile.user.get_full_name }}" />
+      {% else %}
+        <img class="user-thumb img-circle" src="{{ STATIC_URL }}img/userpic.png" alt="{{ profile.user.get_full_name }}" />
+      {% endif %}
+    </a>
+    <div class="comment-content">
+      <div class="commenter">
+        <p class="review-cta"> Help Friends, Share your Experience!</p>
+      </div>
+      <form class="comment-form" method="post">
+        {% csrf_token %}
+        {{ form.honeypot }}
+        {{ form.timestamp }}
+        {{ form.security_hash }}
+        {{ form.content_type }}
+        {{ form.object_pk }}
+        <input type="hidden" name="pin" value="{{pin_id}}">
+        <div class="text-field">
+          <textarea id="review-box" class="content" placeholder="Share your experience..." name="comment"></textarea>
+        </div>
+        <button type="button" class="rounded btn btn-danger add-comment">
+          <span class="button-text">Submit</span>
+        </button>
+      </form>
+    </div>
+  {% else %}
+    <p class="unauth sign-in"><a href="{% url "login" %}" data-modal="#loginModal">{% trans "Sign-In" %}</a> to submit a review.</p>
+  {% endif %}
+  </div>
+</div>

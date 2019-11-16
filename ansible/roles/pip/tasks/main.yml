@@ -1,0 +1,6 @@
+- name: "apt-get install python-pip"
+  apt: pkg=python-pip update_cache=yes
+
+# Do we want to upgrade pip? We will be able to install arbitrary pip versions in the virtualenvs
+#- name: pip update
+#  pip: extra_args='-U' name=pip

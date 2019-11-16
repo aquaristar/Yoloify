@@ -1,0 +1,12 @@
+---
+- name: supervisor present
+  supervisorctl: name={{supervisor.command_name}} state=present
+
+- name: supervisor start
+  supervisorctl: name={{supervisor.command_name}} state=started
+
+- name: supervisor restart
+  supervisorctl: name={{supervisor.command_name}} state=restarted
+
+- name: supervisor stop
+  supervisorctl: name={{supervisor.command_name}} state=stopped

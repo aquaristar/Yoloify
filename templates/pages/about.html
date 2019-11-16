@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load i18n webdesign %}
+{% block page_css %}
+    <!-- HTML5UP BLOCK -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}html5up/css/skel.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}html5up/css/style.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}html5up/css/style-wide.css" />
+{% endblock %}
+
+{% block page_js %}
+    <!-- HTML5UP BLOCK -->
+	<script src="{{ STATIC_URL }}html5up/js/jquery.min.js"></script>
+	<script src="{{ STATIC_URL }}html5up/js/skel.min.js"></script>
+	<script src="{{ STATIC_URL }}html5up/js/init.js"></script>
+{% endblock %}
+
+
+{% block body_class %}About{% endblock %}
+
+{% block container %}
+
+
+
+<!-- Header -->
+			<div id="header"><p>
+				<nav class="about-menu">
+					<ul class="list-inline">
+						<li><a class="page-scroll" href="#about">About us</a></li>
+						<li>&#183;&nbsp;&nbsp;&nbsp;<a class="page-scroll" href="#careers">Join our crew</a></li>
+						<li>&#183;&nbsp;&nbsp;&nbsp;<a class="page-scroll" href="#contact">Contact</a></li>
+					</ul>
+				</nav>
+				</p>
+				
+				<span><img src="{{ STATIC_URL }}/img/logo_website.png" alt=""></span>
+			
+				<p> <h4> Our mission at YOLOify is to organize life's great adventures.</h4></p>
+			</div>
+
+		<!-- Main -->
+			<div id="main">
+				<header class="major container 75%" id="about">
+					<h3 class="about">
+					YOLOify is a Seattle based Startup changing the way people discover new activities, events and places.  
+					We all desire to experience the wonderful adventures life has to offer.  
+					YOLOify organizes those experiences in one place to help you discover your next adventure. 
+					YOLOify is your directory for living life to the fullest.
+					</h3>
+				</header>
+				<div class="box alt container" id="careers">
+					<section class="feature left">
+						<a href="#jobModal1-" class="image icon fa-code" data-toggle="modal"><img src="{{ STATIC_URL }}html5up/images/pic01.jpg" alt="" /></a>
+						<a href="#jobModal1-" data-toggle="modal">
+							<div class="content">
+								<h3>Coming Soon</h3>
+								<p></p>
+							</div>
+						</a>
+					</section>
+					<section class="feature right">
+						<a href="#jobModal2-" class="image icon fa-pencil" data-toggle="modal"><img src="{{ STATIC_URL }}html5up/images/pic02.jpg" alt="" /></a>
+						<a href="#jobModal2-" data-toggle="modal">
+							<div class="content">
+								<h3>Coming Soon</h3>
+								<p></p>
+							</div>
+						</a>
+					</section>
+				</div>
+
+				<div class="box container" id="contact">
+					<section>
+						<header>
+							<h3>Contact Us</h3>
+						</header>
+						<div class="text-center">
+							<div class="row text-center">
+								<div class="col-md-4">
+									<h4>Press</h4>
+									<div  class="small">For reviews or interviews,
+										<br>
+										<strong>
+											<a href="mailto:press@yoloify.com" target="blank_">press@yoloify.com</a>
+										</strong>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<h4>Support</h4>
+									<div  class="small">For questions or commments about our product,
+										<br>
+										<strong>
+											<a href="mailto:support@yoloify.com" target="blank_">support@yoloify.com</a>
+										</strong>
+									</div>
+								</div>
+								<div>
+									<h4>General</h4>
+									<div class="small">For general questions or inquiries,
+										<br>
+										<strong>
+											<a href="mailto:info@yoloify.com" target="blank_">info@yoloify.com</a>
+										</strong>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+
+		<!-- Footer -->
+			<div id="footer">
+				<div class="container 75%">
+
+
+
+					<ul class="icons">
+						<li><a href="https://instagram.com/yoloify/" class="icon fa-instagram" target="blank_"><span class="label">Instagram</span></a></li>
+						<li><a href="https://www.facebook.com/yoloify" class="icon fa-facebook" target="blank_"><span class="label">Facebook</span></a></li>
+						<li><a href="https://twitter.com/yoloify_" class="icon fa-twitter" target="blank_"><span class="label">Twitter</span></a></li>
+						<li><a href="https://plus.google.com/+Yoloify" class="icon fa-google-plus" target="blank_"><span class="label">Twitter</span></a></li>
+          			</ul>
+
+					<ul class="copyright">
+						<li>&copy; YOLOify . All rights reserved.</li><li>About Page by: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+				</div>
+			</div>
+
+  <!-- Job Modal 1 -->
+    <div class="job-modal modal fade" id="jobModal1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2>Job Title</h2>
+                            <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
+                            <img class="img-responsive" src="#" alt="">
+                            <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
+                            <p>
+                                <strong>Want these icons in this portfolio item sample?</strong>You can download 60 of them for free, courtesy of <a href="https://getdpd.com/cart/hoplink/18076?referrer=bvbo4kax5k8ogc">RoundIcons.com</a>, or you can purchase the 1500 icon set <a href="https://getdpd.com/cart/hoplink/18076?referrer=bvbo4kax5k8ogc">here</a>.</p>
+                            <ul class="list-inline">
+                                <li>Date: July 2014</li>
+                                <li>Client: Round Icons</li>
+                                <li>Category: Graphic Design</li>
+                            </ul>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i> Close Job</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  <!-- Job Modal 2 -->
+    <div class="job-modal modal fade" id="jobModal2" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <!-- Project Details Go Here -->
+                            <h2>Job Title</h2>
+                            <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
+                            <img class="img-responsive" src="#" alt="">
+                            <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
+                            <p>
+                                <strong>Want these icons in this portfolio item sample?</strong>You can download 60 of them for free, courtesy of <a href="https://getdpd.com/cart/hoplink/18076?referrer=bvbo4kax5k8ogc">RoundIcons.com</a>, or you can purchase the 1500 icon set <a href="https://getdpd.com/cart/hoplink/18076?referrer=bvbo4kax5k8ogc">here</a>.</p>
+                            <ul class="list-inline">
+                                <li>Date: July 2014</li>
+                                <li>Client: Round Icons</li>
+                                <li>Category: Graphic Design</li>
+                            </ul>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i> Close Job</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

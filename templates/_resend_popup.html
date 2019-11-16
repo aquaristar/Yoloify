@@ -1,0 +1,26 @@
+{% load i18n crispy_forms_tags %}
+{# TODO use id_for_label #}
+<div id="resendModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="resendModalTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="/api/resend">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 id="resendModalTitle" class="modal-title">{% trans "Confirmation email resend" %}</h4>
+        </div>
+        <div class="modal-body">
+            <div class="alert-form alert-danger alert hide"></div>
+            <div class="alert-form alert-success alert hide"></div>
+            {% csrf_token %}
+            {% include "forms/_form_errors.html" with form=form %}
+            {% with hide_label=True ajax=True %}
+              {% include "forms/_input.html" with field=form.email errors=form.errors.email %}
+            {% endwith %}
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-block btn-primary">{% trans "Send" %}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

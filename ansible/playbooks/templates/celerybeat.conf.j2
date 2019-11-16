@@ -1,0 +1,26 @@
+; ================================
+;  celery beat supervisor example
+; ================================
+
+[program:celeryb]
+; Set full path to celery program if using virtualenv
+command={{project.virtualenv}}/bin/python {{project.root}}/manage.py celery beat --loglevel=INFO --pidfile={{project.virtualenv}}/celerybeat.pid --schedule={{project.virtualenv}}/ccelerybeat-schedule
+
+directory={{ project.root }}
+user=celery
+process_name=%(program_name)s
+numprocs=1
+stdout_logfile={{celery_log_dir}}/beat.log
+stderr_logfile={{celery_log_dir}}/beat.log
+autostart=true
+autorestart=true
+startsecs=10
+stopasgroup=true
+
+; Need to wait for currently executing tasks to finish at shutdown.
+; Increase this if you have very long running tasks.
+stopwaitsecs = 600
+
+; if rabbitmq is supervised, set its priority higher
+; so it starts first
+priority=998

@@ -1,0 +1,65 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_static admin_modify %}
+{% load admin_urls %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+  jQuery(function() {
+    var $searchForm = jQuery('form#search');
+    var $searchSubmit = jQuery(':submit', $searchForm);
+    var $bindForm = jQuery('form#bind');
+    var $thumb = jQuery('.thumb', $bindForm);
+    var $loader = jQuery('.loader');
+    $searchForm.submit(function(event) {
+      event.preventDefault();
+      $searchSubmit.attr('disabled', 'disabled');
+      $loader.show();
+      $bindForm.hide();
+      $thumb.attr('src', '');
+
+      jQuery.post($searchForm.attr('action'), $searchForm.serialize(), function(json) {
+        var payload = JSON.parse(json);
+        $('.title', $bindForm).html(payload.title);
+        $('[name=to]', $bindForm).val(payload.to);
+        $thumb.one('load', function() {
+          $loader.hide()
+          $bindForm.show();
+          $searchSubmit.removeAttr('disabled');
+        });
+        $thumb.attr('src', payload.thumb_url);
+      });
+    });
+  });
+</script>
+{% endblock %}
+
+{% block object-tools-items %}
+  <li>
+    <a href="#" class="historylink" onClick="javascript:void(jQuery('#bindGroup').toggle())">{% trans "Merge" %}</a>
+    <div id="bindGroup" style="display:none;position:absolute;top:35px;right:10px;background:white;border:1px solid #eee;padding: 10px;">
+      <form id="search" action="../search/">
+        {% csrf_token %}
+        <input type="text" name="to" placeholder="ID" />
+        <input type="submit" value="Search" />
+      </form>
+      <form id="bind" action="../merge/" style="display:none">
+        <br />
+        <hr />
+        <br />
+        <p>Confirm merging <em>to</em> this one.</p>
+        <input type="hidden" name="goal" value="{{ object_id }}" />
+        <input type="hidden" name="to" />
+        <label class="title"></label>
+        <br /><br />
+        <img class="thumb" src="" />
+        <br /><br />
+        <input type="submit" value="Merge" onClick="javascript:window.al;" />
+      </form>
+      <div class="loader" style="display:none;text-align:center">
+        <br />
+        <img src="{{ STATIC_URL }}img/ajax-loader.gif" />
+      </div>
+    </div>
+  </li>
+  {{ block.super }}
+{% endblock %}

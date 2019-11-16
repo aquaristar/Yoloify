@@ -1,0 +1,4 @@
+---
+supervisor_version: 3.0a8
+supervisor_conf: supervisor.conf.j2
+supervisord_upstart: supervisord.upstart.j2

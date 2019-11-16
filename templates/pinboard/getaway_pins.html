@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load thumbnail i18n %}
+{% block og_basic %}
+<title>{% block title %}{{ city_getaway.meta_title | escape }} | YOLOify {% endblock %}</title>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="http://{{ SITE_DOMAIN }}{{ city_getaway.get_absolute_url }}"/>
+<link rel="canonical" href="http://{{ SITE_DOMAIN }}{{ city_getaway.get_absolute_url }}">
+<meta property="og:image" content="http://{{ SITE_DOMAIN }}/media/{{ city_getaway.og_image }}"/>
+<meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}/media/{{ city_getaway.og_image }}"/>
+<meta name="description" content="{{ city_getaway.meta_description }}">
+<meta property="og:description" content="{{ city_getaway.meta_description }}"/>
+<meta name="twitter:description" content="{{ city_getaway.meta_description }}">
+<meta property="og:title" content="{{ city_getaway.meta_title }} | YOLOify"/>
+<meta name="twitter:title" content="{{ city_getaway.meta_title | escape }}"/>
+<html itemscope itemtype="http://schema.org/LocalBusiness">
+<meta itemprop="name" content="{{ city_getaway.meta_title }} | YOLOify">
+<meta itemprop="description" content="{{ city_getaway.meta_description }}">
+<meta itemprop="image" content="http://{{ SITE_DOMAIN }}/media/{{ city_getaway.og_image }}">
+{% endblock %}
+{% block body_class %}local profile{% endblock %}
+
+{% block nav_local %}<li class="active"><a href="{% url "local" %}"><span class="glyphicon glyphicon-map-marker"></span> {% trans "LOCAL" %}</a></li>{% endblock %}
+
+{% block navbar-header %}
+
+{% endblock %}
+
+{% block container %}
+<div class="media">
+    <div class="container">
+        <div class="header-title">Top things to do in {{ city_getaway.name }}</div>
+    </div>
+</div>
+<div class="container">
+    <div class="tab-content">
+        <div class="tab-pane active pinboard-container">
+            {% if more %}
+            <ul class="pinboard list-unstyled">
+                {% with pins=pins pinboard_name=pinboard_name part_number=part_number more=more %}
+                {% include "pinboard/_pinboard_part.html" %}
+                {% endwith %}
+            </ul>
+            {% else %}
+            <div class="alert alert-info">
+                No places have been visited.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% include "pinboard/_pin_popup.html" %}
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+  var pin = new Pin();
+  var pinModal = new PinModal({model:pin});
+  pinModal.on('destroy', function() {
+    window.location.href = '/trending/';
+  });
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+  lazyStart(function () {
+      // bind pinboard to modals
+      $('.pinboard .pin a.zoom').click(function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        pin.set({id: id});
+        pinModal.open();
+      });
+  });
+
+{% endblock %}
+</script>

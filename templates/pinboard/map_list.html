@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load thumbnail i18n %}
+{% block og_basic %}
+    <meta property="og:title" content="Discover places, hikes, events, and activities today!"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}/map/list/?utm_source=Social&utm_medium=Share&utm_campaign=OG_Share"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}/map/list/">
+    <meta name="twitter:title" content="Discover local places, hikes, events, and activities today!">
+    <meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg"/>
+    <meta name="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta property="og:description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!"/>
+    <meta name="twitter:description" content="Join YOLOify to discover breathtaking hikes, places, and other amazing activities both locally and while traveling!">
+    <html itemscope itemtype="http://schema.org/LocalBusiness">
+    <meta itemprop="name" content="Discover places, hikes, events, and activities today!">
+    <meta itemprop="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta itemprop="image" content="http://{{ SITE_DOMAIN }}/static/img/og_image.jpg">
+    
+    <title>{% block title %}Discover beautiful hikes, activities, and places both locally and while traveling! | YOLOify{% endblock %}</title>
+{% endblock %}
+{% block body_class %}map profile{% endblock %}
+
+{% block nav_explore %}<li class="active"><a href="{% url "map" %}"><span class="glyphicon glyphicon-globe"></span> {% trans "EXPLORE" %}</a></li>{% endblock %}
+
+{% block navbar-header %}
+    <a href="#" class="local-filter-toggle active"><span title="Filters" class="glyphicon glyphicon-filter"></span></a>
+{% endblock %}
+
+{% block container %}
+    <div class="media">
+        <div id="view-switch">
+            <div class="btn-group">
+                <a class="btn btn-default disabled" title="{% trans "Current View" %}"><span class="glyphicon glyphicon-th-large"></span></a>
+                <a href="{% url "map" %}" class="btn btn-default" title="{% trans "Toggle to Map View" %}"><span class="glyphicon glyphicon-map-marker"></span></a>
+            </div>
+        </div>
+        <nav class="filters">
+            <form class="form-inline filters" role="form">
+                <div class="form-group">
+                    <select name="category" class="form-control input-s">
+                        <option value="" selected="selected">{% trans "All categories" %}</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if user.is_authenticated %}
+                    <div class="form-group">
+                        <label for="among">among</label>
+                        <select name="among" class="form-control">
+                            <option value="everyone" selected="selected">Everyone</option>
+                            <option value="friends">Friends</option>
+                        </select>
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="within">within</label>
+                    <input type="number" name="within" value="20" class="form-control input-xs" />
+                </div>
+
+                <div class="form-group geocomplete-group">
+                    <label for="geocomplete">miles of</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <a class="geolocation" href="#" title="Find My Location"><span class="glyphicon glyphicon-record"></span></a>
+                        </div>
+                        <input type="text" name="geocomplete" value="Seattle" class="form-control input-l" />
+                        <input type="hidden" name="lng" />
+                        <input type="hidden" name="lat" />
+                    </div>
+                </div>
+            </form>
+        </nav>
+
+    </div>
+
+    {% include "pinboard/_pin_popup.html" %}
+
+    <div class="container">
+        <div class="tab-content">
+            <div class="tab-pane active pinboard-container">
+                <script type="text/template" class="pinboard-starter">
+                    <ul class="pinboard list-unstyled">
+                        <div id="next-url" style="visibility: hidden; position: absolute;" data-next-url="/next-part/local/<%= q %>"></div>
+                    </ul>
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+{% endblock %}
+
+<script>
+    {% block js_init %}{{ block.super }}
+        var filterForm = new LocalFilterForm();
+        filterForm.onChange();
+        window.pin = new Pin();
+        window.pinModal = new PinModal({model: pin});
+        pinModal.on('destroy', function() {
+            window.location.href = '/local/';
+        });
+    {% endblock %}
+</script>

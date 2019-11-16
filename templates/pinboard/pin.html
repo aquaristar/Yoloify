@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load i18n thumbnail crispy_forms_tags %}
+
+{% block og_basic %}
+ <title>{% block title %}{{ pin.goal.title | escape }} {% if pin.goal.location.neighborhood %} near {{ pin.goal.location.neighborhood }} {% endif %} | {{ pin.goal.category}} on YOLOify {% endblock %}</title>
+<!-- Microdata markup added by Google Structured Data Markup Helper. -->
+    <meta property="og:title" content="{{ pin.goal.title | escape }} | YOLOify"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="http://{{ SITE_DOMAIN }}{% url "pin" pin.pk pin.slug_title %}"/>
+    <meta property="og:image" content="http://{{ SITE_DOMAIN }}{{ pin.goal.normal_image_url }}"/>
+    <link rel="canonical" href="http://{{ SITE_DOMAIN }}{% url "pin" pin.pk pin.slug_title %}">
+    <meta name="twitter:title" content="{{ pin.goal.title | escape }}"/>
+    <meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}{{ pin.goal.normal_image_url }}"/>
+    <html itemscope itemtype="http://schema.org/LocalBusiness">
+    <meta itemprop="name" content="{{ pin.goal.title | escape }} | YOLOify">
+    <meta itemprop="image" content="http://{{ SITE_DOMAIN }}{{ pin.goal.normal_image_url }}">
+    
+
+  {% if pin.goal.description %}
+    <meta name="description" content="{{ pin.goal.description }}">
+    <meta property="og:description" content="{{ pin.goal.description }}"/>
+    <meta name="twitter:description" content="{{ pin.goal.description }}"/>
+    <meta itemprop="description" content="{{ pin.goal.description }}"/>
+
+  {% else %}
+    <meta name="description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!">
+    <meta property="og:description" content="Join YOLOify to discover breathtaking hikes, places, events, and other amazing activities both locally and while traveling!"/>
+    <meta name="twitter:description" content="Join YOLOify to discover breathtaking hikes, places, and other amazing activities both locally and while traveling!"/>
+    <meta itemprop="description" content="Join YOLOify to discover breathtaking hikes, places, and other amazing activities both locally and while traveling!"/>
+
+  {% endif %}
+    
+
+{% endblock %}
+
+{% block body_class %}pin-page{% endblock %}
+
+{% block css %}{{ super }}
+  <style type="text/css">
+    #pinModal { margin-top: 50px; }
+  </style>
+{% endblock %}
+
+{% block container %}
+  {% include "pinboard/_pin_popup.html" %}
+  <div class="container"></div>
+{% endblock %}
+
+<script>
+{% block js_init %}{{ block.super }}
+  // we don't know how to handle popstates
+  window.addEventListener('popstate', function(event) {
+    console.log(event);
+    if (event && event.state)
+      location.reload(true);
+  });
+
+  var pin = new Pin({ id: {{ pin.pk }} });
+  var pinModal = new PinModal({model:pin,static:true, dontPushState:true});
+  pinModal.on('destroy', function() { window.location.reload(); });
+  pinModal.open();
+  $('#pinModal').on('shown.bs.modal', function () {
+    pinModal.showSidebarMap();
+  });
+{% endblock %}
+</script>

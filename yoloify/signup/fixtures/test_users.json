@@ -1,0 +1,64 @@
+[
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "aleks",
+            "first_name": "Aleks",
+            "last_name": "Selivanov",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2013-04-09 05:44:09",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$gqMvHnEtBDaq$pgbWkmOgQHUCyLhmEGnNRsb96/l/zzCtpN7fmeLOyaI=",
+            "email": "aleks.selivanov@yahoo.com",
+            "date_joined": "2014-04-22 14:14:50"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "anthony",
+            "first_name": "Anthony",
+            "last_name": "Grove",
+            "is_active": false,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-04-09 05:44:09",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$gqMvHnEtBDaq$pgbWkmOgQHUCyLhmEGnNRsb96/l/zzCtpN7fmeLOyaI=",
+            "email": "anthony@yoloify.com",
+            "date_joined": "2013-09-22 14:14:50"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "steve",
+            "first_name": "Steve",
+            "last_name": "Jobs",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-05-11 04:12:21",
+            "groups": [],
+            "user_permissions": [],
+            "password": "pbkdf2_sha256$10000$gqMvHnEtBDaq$pgbWkmOgQHUCyLhmEGnNRsb96/l/zzCtpN7fmeLOyaI=",
+            "email": "steve@apple.com",
+            "date_joined": "2010-09-01 12:12:12"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "signup.emailconfirmation",
+        "fields": {
+            "user": 2,
+            "key": "e817208219cc38ad1933bc2537c4a27fa3481bc2"
+        }
+    }
+]

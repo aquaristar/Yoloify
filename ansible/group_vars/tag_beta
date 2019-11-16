@@ -1,0 +1,40 @@
+---
+env_user: dev
+branch: master
+
+system_packages:
+  - build-essential
+  - python-setuptools
+  - python-dev
+  - htop
+  - iftop
+  - sysstat
+  - facter
+  - python-software-properties
+  - wget
+
+project:
+  name: yoloify
+  root: /home/yoloify/virtual/yoloify
+  virtualenv: /home/yoloify/virtual
+  requirements: /home/yoloify/virtual/yoloify/requirements.txt
+  repo: git@bitbucket.org:yoloify/yoloify.git
+  django_settings: yoloify.settings
+  ssh_key: /home/dev/.ssh/id_rsa
+
+message_queue:
+  redis_port: 6379
+
+celery_log_dir: /var/log/celery
+
+supervisor_dir: /etc/supervisor
+supervisor_log_dir: /var/log/supervisor
+supervisor_logfile_maxbytes: 10MB
+supervisor_logfile_backups: 5
+supervisor_loglevel: info
+supervisord_conf_file: templates/supervisord.conf.j2
+supervisord_upstart_file: templates/supervisord.upstart.j2
+supervisor_version: 3.0b1
+
+log_dirs:
+  - /home/yoloify/data/whoosh_index

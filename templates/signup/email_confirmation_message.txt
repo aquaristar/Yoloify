@@ -1,0 +1,15 @@
+{% load i18n %}
+{% blocktrans %}Howdy {{first_name}},
+
+Thank you for joining YOLOify! 
+
+To finish signing up, we need to confirm that we have your correct email!
+
+{{ confirmation_url }}
+
+
+Thanks again and welcome to YOLOify!
+
+-YOLOify family
+
+{% endblocktrans %}

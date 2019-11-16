@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body_class %}friends{% endblock %}
+
+{% block container %}
+  <div class="media"></div>
+  <nav>
+    <ul class="nav nav-tabs container">
+      <li class="active"><a href="./">{% blocktrans %}Search{% endblocktrans %}</a></li>
+      <li><a href="{% url "friends" %}">{% blocktrans %}Following{% endblocktrans %}</a></li>
+      <li><a href="{% url "friends" %}?followers">{% blocktrans %}Followers{% endblocktrans %}</a></li>
+    </ul>
+  </nav>
+  <div class="container">
+    <div class="tab-content">
+      <div class="tab-pane active  friends-container">
+      {% if friends %}
+        <ul class="friends  list-unstyled">
+        {% for friend in friends %}
+          <li class="friend">
+            <a href="{% url "profile" friend.pk %}">
+            {% if friend.userpic %}
+              <img src="{{ friend.userpic_large_url }}" width="40" height="40" alt="" />
+            {% else %}
+              <img src="{{ STATIC_URL }}img/userpic.png" width="40" height="40" alt="" />
+            {% endif %}
+              <p>{{ friend.user.get_full_name }}</p>
+            </a>
+          </li>
+        {% endfor %}
+        </ul>
+      {% else %}
+        <br />
+        {# TODO replace with "Search" button #}
+        <p class="text-muted">{% trans "None." %}</p>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+<script>
+{% block js_init %}
+  $('ul.friends li.friend').wookmark({
+    autoResize: true, // This will auto-update the layout when the browser window is resized.
+    container: $('ul.friends').parent(), // Optional, used for some extra CSS styling
+    offset: 0, // Optional, the distance between grid items
+    outerOffset: 0, // Optional, the distance to the containers border
+    itemWidth: '25%', // Optional, the width of a grid item
+    flexibleWidth: true
+  });
+{% endblock %}
+</script>

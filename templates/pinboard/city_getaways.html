@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block og_basic %}
+<title>{% block title %}{{ city_getawaylist.meta_title | escape }} | YOLOify {% endblock %}</title>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="http://{{ SITE_DOMAIN }}{{ city_getawaylist.get_absolute_url }}"/>
+<link rel="canonical" href="http://{{ SITE_DOMAIN }}{{ city_getawaylist.get_absolute_url }}">
+<meta property="og:image" content="http://{{ SITE_DOMAIN }}/media/{{ city_getawaylist.og_image }}"/>
+<meta name="twitter:image:src" content="http://{{ SITE_DOMAIN }}/media/{{ city_getawaylist.og_image }}"/>
+<meta name="description" content="{{ city_getawaylist.meta_description }}">
+<meta property="og:description" content="{{ city_getawaylist.meta_description }}"/>
+<meta name="twitter:description" content="{{ city_getawaylist.meta_description }}">
+<meta property="og:title" content="{{ city_getawaylist.meta_title }} | YOLOify"/>
+<meta name="twitter:title" content="{{ city_getawaylist.meta_title | escape }}"/>
+<html itemscope itemtype="http://schema.org/LocalBusiness">
+<meta itemprop="name" content="{{ city_getawaylist.meta_title }} | YOLOify">
+<meta itemprop="description" content="{{ city_getawaylist.meta_description }}">
+<meta itemprop="image" content="http://{{ SITE_DOMAIN }}/media/{{ city_getawaylist.og_image }}">
+    
+
+{% endblock %}
+{% block body_class %}local profile{% endblock %}
+
+{% block nav_local %}<li class="active"><a href="{% url "local" %}"><span class="glyphicon glyphicon-map-marker"></span> {% trans "LOCAL" %}</a></li>{% endblock %}
+
+{% block navbar-header %}
+
+{% endblock %}
+
+{% block container %}
+<div class="media">
+    <div class="container hidden-xs">
+        <div class="header-title">Top weekend getaways from {{ city.name }}</div>
+    </div>
+    <div class="container visible-xs">
+        <div class="header-title">Top weekend getaways from {{ city.name }}</div>
+    </div>
+</div>
+<div class="container cities">
+    <div class="tab-content">
+        <section id="cities" class="city">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 col-lg-offset-1 text-center">
+                        <div class="row">
+                        {% for get in city_getaways %}
+                            <div class="col-md-4">
+                                <div class="city-item" style="visibility: hidden";>
+                                    <a href="{{ get.get_absolute_url }}"  title="Best {{ get.name }} in {{ city.name }}">
+                                        {% with get.generate_thumbnail as thumb %}
+                                        <img class="img-city img-responsive lazy" data-src="{{ thumb.url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
+                                        {% endwith %}
+                                        <div class="caption-category">
+                                          <h3>{{ get.name }}</h3>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="no-results">{% blocktrans %}Coming Soon! To view activities and places in this area <a href="/map/">check out the Explore page!</a>{% endblocktrans %}</p>
+                            {% endfor %}
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.col-lg-10 -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container -->
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block js %}{{ super }}
+<script src="{{ STATIC_URL }}js/common/lazyimg.js"></script>
+<script>
+    lazyImageLoad('.city-item', function(){
+      console.log('Done!');
+    });
+  </script>
+{% endblock %}
